@@ -56,3 +56,36 @@ a {
          border: 1px solid #FF4343;
          background: #FF9C9C;
 }
+
+
+ul.list-posts {
+         list-style: none;
+         margin: 0;
+         padding 0;
+         max-width: 600px;
+}
+ul.list-posts li {
+         margin: 20px 0 0 0;
+         border: 1.5px solid #668B3C;
+
+}
+.my_a{
+    color: #668B3C;
+}
+.my_a:hover{
+    color: #FF8642;
+}
+
+ul.list-posts .title {
+         margin: 0;
+         padding: 10px;
+         background: #B1DDA1;
+
+}
+
+ul.list-posts .annonce {
+         margin: 0;
+         padding: 10px;
+         background: #E5F3CF;
+
+}

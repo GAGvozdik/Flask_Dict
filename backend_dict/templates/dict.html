@@ -1,15 +1,18 @@
 {% extends 'index.html' %}
  
 {% block content %}
-{{ my_text }}
-    <hr>
+
     <h2>Список статей</h2>
     <ul class="list-posts">
         {% for p in posts %}
         <li>
-            <p class="title">{{ p.id }}<br>{{p.title}}</p>
-            <p class="annonce">{{ p.text[:50]}}</p>
+            <p class="title">
+                №{{ p.id }}&nbsp;
+                <a class="my_a" href="{{ url_for('showPost', id_post=p.id)}}">{{p.title}}</a>
+            </p>
+            <p class="annonce">{{ p.text}}</p>
         </li>
     {% endfor %}
     </ul>
 {% endblock %}
+

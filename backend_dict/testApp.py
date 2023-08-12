@@ -1,13 +1,4 @@
-from flask import Flask, \
-    render_template, \
-    request, \
-    g, \
-    url_for, \
-    abort, \
-    flash, \
-    session, \
-    redirect
-
+from flask import Flask, render_template, request, g, url_for, abort, flash, session, redirect
 from FDataBase import FDataBase
 import sqlite3
 import os
@@ -23,11 +14,11 @@ app.config.from_object(__name__)
 app.config.update(dict(DATABASE=os.path.join(app.root_path, 'flsite.db')))
 
 menu = [
-    {"title": "My dict", "url": "dict"},
-    {"title": "Add post", "url": "add_post"},
-    {"title": "Login", "url": "login"},
-    {"title": "About", "url": "about"},
-    {"title": "Contacts", "url": "contacts"}]
+    {"title": "My dict", "url": "/dict"},
+    {"title": "Add post", "url": "/add_post"},
+    {"title": "Login", "url": "/login"},
+    {"title": "About", "url": "/about"},
+    {"title": "Contacts", "url": "/contacts"}]
 
 
 def connect_db():
@@ -59,6 +50,8 @@ def close_db(error):
         g.link_db.close()
 
 
+
+@app.route("/index")
 @app.route("/")
 def index():
     return render_template('index.html', my_text='Main Page', menu=menu)
@@ -91,7 +84,7 @@ def profile(username):
 
 @app.route("/about")
 def about():
-    return render_template('index.html', my_text='About', menu=menu)
+    return render_template('about.html', my_text='About', menu=menu)
 
 
 @app.route("/contacts", methods=["POST", "GET"])
@@ -109,7 +102,7 @@ def contacts():
 
 @app.errorhandler(404)
 def pageNotFount(error):
-    return render_template('page404.html', title="Страница не найдена", menu=menu), 404
+    return render_template('page404.html', my_text="Страница не найдена", menu=menu), 404
 
 
 @app.route("/add_post", methods=["POST", "GET"])
@@ -127,7 +120,19 @@ def addPost():
         else:
             flash('Ошибка добавления статьи', category='error')
 
-    return render_template('add_post.html', menu=menu, title="Добавление статьи")
+    return render_template('add_post.html', menu=menu, my_text="Добавление статьи")
+
+
+@app.route("/post/<int:id_post>")
+def showPost(id_post):
+    db = get_db()
+    dbase = FDataBase(db)
+    title, post = dbase.getPost(id_post)
+    if not title:
+        abort(404)
+
+    return render_template('post.html', menu=menu, my_text=title, post=post)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
