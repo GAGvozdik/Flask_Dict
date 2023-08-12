@@ -1,0 +1,58 @@
+
+body {
+    font-family: 'Arial';
+    margin: 0px;
+    padding 0px;
+    height: 100%;
+    width: 100%;
+    background-color: #E5F3CF;
+}
+
+.mainmenu {
+    background: #C0362C;
+    height: 60px;
+    margin: 0;
+    font-size: 20px;
+    overflow: hidden;
+}
+
+.block {
+    float: left;
+    height: 60px;
+    padding: 20px 30px 20px 30px ;
+
+}
+.block:hover {
+    background: #FF8642;
+    color: #C0362C;
+}
+
+a {
+    color: #B1DDA1;
+    text-decoration: none;
+}
+
+.content {
+    margin: 20px;
+    color: black;
+}
+
+.form-contact label {
+         display: inline-block;
+         min-width: 80px;
+}
+
+.form-contact p {margin: 10px 0 10px 0;}
+.form-contact input[type=submit], textarea {
+         font-size: 16px;
+}
+
+.flash {padding: 10px;}
+.flash.success {
+         border: 1px solid #21DB56;
+         background: #AEFFC5;
+}
+.flash.error {
+         border: 1px solid #FF4343;
+         background: #FF9C9C;
+}
