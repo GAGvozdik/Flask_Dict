@@ -3,7 +3,7 @@
     <link type="text/css" href={{url_for('static', filename="css/style.css")}} rel="stylesheet" />
     <head>
         <meta charset="UTF-8">
-        <title>Title</title>
+        <title>Flask Dict</title>
     </head>
     <body>
 
@@ -13,18 +13,16 @@
 
                 <a href="{{m.url}}">
                     <div class="block">
-                        {{m.name}}
+                        {{m.title}}
                     </div>
                 </a>
 
             {% endfor %}
         </div>
-
-        {% block content %}
-            <div class="content">
-                {{my_text}}
-            </div>
-        {% endblock %}
-
+        <div class="content">
+            {% block content %}
+                    {{my_text}}
+            {% endblock %}
+        </div>
     </body>
 </html>

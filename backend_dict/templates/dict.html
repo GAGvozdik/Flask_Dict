@@ -1,0 +1,15 @@
+{% extends 'index.html' %}
+ 
+{% block content %}
+{{ my_text }}
+    <hr>
+    <h2>Список статей</h2>
+    <ul class="list-posts">
+        {% for p in posts %}
+        <li>
+            <p class="title">{{ p.id }}<br>{{p.title}}</p>
+            <p class="annonce">{{ p.text[:50]}}</p>
+        </li>
+    {% endfor %}
+    </ul>
+{% endblock %}
