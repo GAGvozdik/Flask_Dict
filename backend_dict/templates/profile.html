@@ -1,5 +1,8 @@
 {% extends 'index.html' %}
  
 {% block content %}
+    {% for cat, msg in get_flashed_messages(True) %}
+        <div class="flash {{cat}}">{{msg}}</div>
+    {% endfor %}
     Вернуться на <a href="/">главную</a> страницу.
 {% endblock %}

@@ -50,7 +50,6 @@ def close_db(error):
         g.link_db.close()
 
 
-
 @app.route("/index")
 @app.route("/")
 def index():
@@ -67,10 +66,15 @@ def dict():
 @app.route("/login", methods=["POST", "GET"])
 def login():
     if 'userLogged' in session:
+
         return redirect(url_for('profile', username=session['userLogged']))
     elif request.method == 'POST' and request.form['username'] == "selfedu" and request.form['psw'] == "123":
         session['userLogged'] = request.form['username']
+        flash('Log in success', category='success')
         return redirect(url_for('profile', username=session['userLogged']))
+    else:
+        flash('login or password uncorrect', category='error')
+
     return render_template('login.html', my_text='Autorize', menu=menu)
 
 
@@ -112,7 +116,7 @@ def addPost():
 
     if request.method == "POST":
         if len(request.form['name']) > 4 and len(request.form['post']) > 10:
-            res = dbase.addPost(request.form['name'], request.form['post'])
+            res = dbase.addPost(request.form['name'], request.form['post'], request.form['url'])
             if not res:
                 flash('Ошибка добавления статьи', category='error')
             else:
@@ -123,11 +127,11 @@ def addPost():
     return render_template('add_post.html', menu=menu, my_text="Добавление статьи")
 
 
-@app.route("/post/<int:id_post>")
-def showPost(id_post):
+@app.route("/post/<alias>")
+def showPost(alias):
     db = get_db()
     dbase = FDataBase(db)
-    title, post = dbase.getPost(id_post)
+    title, post = dbase.getPost(alias)
     if not title:
         abort(404)
 
