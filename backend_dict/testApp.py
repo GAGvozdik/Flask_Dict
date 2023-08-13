@@ -6,6 +6,7 @@ import os
 
 from FDataBase import FDataBase
 from UserLogin import UserLogin
+from forms import LoginForm, RegisterForm
 
 app = Flask(__name__)
 
@@ -28,28 +29,12 @@ login_manager.login_message_category = "success"
 
 
 
-def getCloseMenu(islog):
-    if islog == 0:
-        return [
-            {"title": "My dict", "url": "/dict"},
-
-            {"title": "About", "url": "/about"},
-            {"title": "Contacts", "url": "/contacts"}]
-    else:
-        return [
-            {"title": "My dict", "url": "/dict"},
-            {"title": "Add post", "url": "/add_post"},
-            {"title": "Profile", "url": "/profile"},
-            {"title": "About", "url": "/about"},
-            {"title": "Contacts", "url": "/contacts"}]
-
 menu = [
-    {"title": "My dict", "url": "/dict"},
-    {"title": "Login", "url": "/login"},
-    {"title": "Add post", "url": "/add_post"},
-    {"title": "Profile", "url": "/profile"},
-    {"title": "Contacts", "url": "/contacts"},
-    {"title": "About", "url": "/about"}]
+    {"title": "МФК", "url": "/dict"},
+    {"title": "Авторизация", "url": "/login"},
+    {"title": "Добавить статью", "url": "/add_post"},
+    {"title": "Обратная связь", "url": "/contacts"},
+    {"title": "О нас", "url": "/about"}]
 
 
 
@@ -128,37 +113,32 @@ def login():
     if current_user.is_authenticated:
         return redirect(url_for('profile'))
 
-    if request.method == "POST":
-        user = dbase.getUserByEmail(request.form['email'])
-        if user and check_password_hash(user['psw'], request.form['psw']):
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = dbase.getUserByEmail(form.email.data)
+        if user and check_password_hash(user['psw'], form.psw.data):
             userlogin = UserLogin().create(user)
-            rm = True if request.form.get('remainme') else False
+            rm = form.remember.data
             login_user(userlogin, remember=rm)
-            flash("Вы успешно вошли", "success")
             return redirect(request.args.get("next") or url_for("profile"))
 
         flash("Неверная пара логин/пароль", "error")
-
-    return render_template("login.html", menu=menu, title="Авторизация")
+    return render_template("login.html", menu=menu, my_text="Авторизация", form=form)
 
 
 @app.route("/register", methods=["POST", "GET"])
 def register():
-    if request.method == "POST":
-        session.pop('_flashes', None)
-        if len(request.form['name']) > 4 and len(request.form['email']) > 4 \
-                and len(request.form['psw']) > 4 and request.form['psw'] == request.form['psw2']:
-            hash = generate_password_hash(request.form['psw'])
-            res = dbase.addUser(request.form['name'], request.form['email'], hash)
-            if res:
-                flash("Вы успешно зарегистрированы", "success")
-                return redirect(url_for('login'))
-            else:
-                flash("Ошибка при добавлении в БД", "error")
+    form = RegisterForm()
+    if form.validate_on_submit():
+        hash = generate_password_hash(request.form['psw'])
+        res = dbase.addUser(form.name.data, form.email.data, hash)
+        if res:
+            flash("Вы успешно зарегистрированы", "success")
+            return redirect(url_for('login'))
         else:
-            flash("Неверно заполнены поля", "error")
+            flash("Ошибка при добавлении в БД", "error")
 
-    return render_template("register.html", menu=menu, my_text="Регистрация")
+    return render_template("register.html", menu=menu, my_text="Регистрация", form=form)
 
 
 @app.route('/logout')

@@ -1,15 +1,33 @@
 {% extends 'index.html' %}
 
-{% block content %}
 
+{% block content %}
     <form action="" method="post" class="form-contact">
-        <p><label>Email: </label> <input type="text" name="email" value="" requied />
-        <p><label>Пароль: </label> <input type="password" name="psw" value="" requied />
-        <p><input type="checkbox" name="remainme" /> Запомнить меня
-        <p><input type="submit" value="Войти" />
-        <p><a class="my_a" href="{{url_for('register')}}">Регистрация</a>
+    {{ form.hidden_tag() }}
+
+    {% for field in form if field.name not in ['csrf_token', 'remember', 'submit'] -%}
+         <br>
+        {{ field.label() }}
+         {% if field.errors %}
+                   {{ field(class="invalid") }}
+         <span class="invalid-feedback">
+                   {% for e in field.errors %}
+                   {{ e }}
+                   {% endfor %}
+         </span>
+         {% else %}
+                   {{ field() }}
+         {% endif %}
+
+    {% endfor %}
+
+        <br>{{ form.remember.label() }} {{ form.remember() }}
+        <br>{{ form.submit() }}
+
+        <br><a class="my_a" href="{{url_for('register')}}">Регистрация</a>
     </form>
 
+    <br>
     {% for cat, msg in get_flashed_messages(True) %}
         <div class="flash {{cat}}">{{msg}}</div>
     {% endfor %}
