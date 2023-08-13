@@ -21,3 +21,25 @@ avatar BLOB DEFAULT NULL,
 time integer NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS mfk (
+id integer PRIMARY KEY AUTOINCREMENT,
+name text,
+faculty text,
+online text,
+openclose text,
+score text
+);
+
+--name text,
+--faculty text,
+--online text,
+--openclose text,
+--discribe text,
+--teachers text,
+--whereis text,
+--whenis text,
+--complexity text,
+--semester text,
+--record text,
+--score text,
+--url text,

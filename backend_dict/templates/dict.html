@@ -2,17 +2,18 @@
  
 {% block content %}
 
-    <h2>Список статей</h2>
+    <h2>МФК</h2>
     <ul class="list-posts">
-        {% for p in posts %}
-        <li>
-            <p class="title">
+        {% for m in mfk_table %}
+            <li>
+                <p class="title">
 
-                <a class="my_a" href="{{ url_for('showPost', alias=p.url)}}">№{{ p.id }}&nbsp;{{p.title}}</a>
-            </p>
-            <p class="annonce">{{ p.text[:150] | striptags }}&nbsp;...</p>
-        </li>
-    {% endfor %}
+                    <a class="my_a" href="{{ url_for('showMfk', alias=m.id)}}">{{ m.id }}&nbsp;{{m.name}}&nbsp;{{m.faculty}}</a>
+                </p>
+                <p class="annonce">{{ m.online }}</p>
+            </li>
+        {% endfor %}
     </ul>
+
 {% endblock %}
 
