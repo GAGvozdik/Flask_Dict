@@ -10,7 +10,7 @@
 
                 <a class="my_a" href="{{ url_for('showPost', alias=p.url)}}">№{{ p.id }}&nbsp;{{p.title}}</a>
             </p>
-            <p class="annonce">{{ p.text[:150] | striptags }}</p>
+            <p class="annonce">{{ p.text[:150] | striptags }}&nbsp;...</p>
         </li>
     {% endfor %}
     </ul>
