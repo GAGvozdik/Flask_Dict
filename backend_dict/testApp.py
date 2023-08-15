@@ -76,7 +76,7 @@ def close_db(error):
 @app.route("/dict")
 @app.route("/")
 def dict():
-    return render_template('dict.html', my_text='Dict', menu=menu, mfk_table=dbase.getMfkAnonce())
+    return render_template('dict.html', my_text='МФК', menu=menu, mfk_table=dbase.getMfkAnonce())
 
 
 @app.route("/about")
@@ -85,26 +85,41 @@ def about():
 
 
 
-@app.route("/mfk/<alias>")
+
+
+@app.route("/mfk/<alias>", methods=['GET', 'POST'])
 def showMfk(alias):
     mfk = dbase.getMfk(alias)
     if not mfk:
         abort(404)
-    #
-    # title, post = dbase.getPost()
-    #
-    # if request.method == "POST":
-    #     if len(request.form['name']) > 4 and len(request.form['post']) > 10:
-    #         res = dbase.addPost(request.form['name'], request.form['post'], request.form['url'])
-    #         if not res:
-    #             flash('Ошибка добавления статьи', category='error')
-    #         else:
-    #             flash('Статья добавлена успешно', category='success')
-    #     else:
-    #         flash('Ошибка добавления статьи', category='error')
-    #
+        abort(404)
 
-    return render_template('mfk.html', menu=menu, mfk=mfk)
+    my_comments = dbase.getComment(alias)
+    for my in my_comments:
+        print("comments = ", my)
+    print("altype = ", type(alias))
+    print("comments = ", mfk)
+
+    return render_template('mfk.html', menu=menu, mfk=mfk, alias=alias, my_comments=dbase.getComment(alias))
+
+
+@app.route("/addComment/<alias>", methods=['GET', 'POST'])
+@login_required
+def addComment(alias):
+
+    mfk = dbase.getMfk(alias)
+    if not mfk:
+        abort(404)
+
+    if request.method == "POST":
+        res = dbase.addComment(current_user.getName(), request.form['text'], str(alias), request.form['score'])
+        if not res:
+            flash('Ошибка добавления статьи', category='error')
+        else:
+            flash('Статья добавлена успешно', category='success')
+            # return redirect(url_for("showMfk(alias)"))
+
+    return render_template('comments.html', menu=menu, mfk=mfk, alias=alias, my_comments=dbase.getComment(alias))
 
 
 

@@ -1,21 +1,33 @@
 {% extends 'index.html' %}
 
 {% block content %}
-
-    {{ mfk.name }}
+здесь будет инфа по мфк <br>
+    <br>{{ mfk.name }}
 
 
     {% for cat, msg in get_flashed_messages(True) %}
         <div class="flash {{cat}}">{{msg}}</div>
     {% endfor %}
+<br>
+    <a class="my_a" href="{{ url_for('addComment', alias=alias)}}">Добавить комментарий</a>
+<br>
+здесь комменты
+<br>
+    <h2>Комментарии</h2>
+    <ul class="list-posts">
+        {% for m in my_comments %}
+            <li>
+                <p class="title">
 
-    <form action="" method="post" class="form-contact">
-        <p><label>Название статьи: </label> <input type="text" name="name" value="" requied />
-        <p><label>URL статьи: </label> <input type="text" name="url" value="" requied />
-        <p><label>Текст статьи:</label>
-        <p><textarea name="post" rows=7 cols=40></textarea>
-        <p><input type="submit" value="Добавить" />
-    </form>
+                    {{m.name}}
+                    <br>Оценка&nbsp;{{m.score}}
+                </p>
+                <p class="annonce">{{ m.text }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+
+
 
 {% endblock %}
 

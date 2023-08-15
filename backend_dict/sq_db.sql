@@ -30,6 +30,15 @@ openclose text,
 score text
 );
 
+
+CREATE TABLE IF NOT EXISTS comments (
+id integer PRIMARY KEY AUTOINCREMENT,
+username text,
+text text,
+mfkname text,
+score text
+);
+
 --name text,
 --faculty text,
 --online text,

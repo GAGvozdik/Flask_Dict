@@ -136,3 +136,62 @@ ul.profile-info li {margin-top: 10px;}
 .form-contact .invalid-feedback {
          color: #CC0000;
 }
+
+
+:root{
+  --primary-colour: #E5F3CF;
+  --secondary-colour: hsl(38 90% 55%);
+
+  --star-colour: hsl(38 90% 55%);
+}
+
+.my_label{
+  margin: 0px -55px -55px 5px;
+  padding: 0px 0px 0px 0px;
+  }
+.container{
+  background: #E5F3CF;
+  margin: 0px;
+  padding: 0px 0px -40px 0px;
+  float:left;
+  transform: translate(0%, 0%) rotateY(180deg);
+}
+
+.container .container__items{
+  display: flex;
+  align-items: left;
+  justify-content: left;
+  gap: -50px;
+}
+
+.container .container__items input{
+  display: none;
+}
+
+.container .container__items label{
+  aspect-ratio: 1;
+}
+
+.container .container__items label .star-stroke{
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  background: var(--secondary-colour);
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+}
+
+.container .container__items label .star-stroke .star-fill{
+  width: 60%;
+  aspect-ratio: 1;
+  background: var(--primary-colour);
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+}
+
+.container .container__items input:hover ~ label .star-stroke,.container .container__items input:checked ~ label .star-stroke{
+  background: var(--star-colour);
+}
+
+.container .container__items input:checked ~ label .star-stroke .star-fill{
+  background: var(--star-colour);
+}

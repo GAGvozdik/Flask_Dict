@@ -17,7 +17,7 @@ class FDataBase:
     #     except:
     #         print("Ошибка чтения из БД")
     #     return []
-
+    #
     # def addPost(self, title, text, url):
     #     try:
     #         self.__cur.execute("SELECT COUNT() as `count` FROM posts WHERE url LIKE ?", (url,))
@@ -123,6 +123,36 @@ class FDataBase:
 
         return []
 
+
+    def addComment(self, username, text, mfkname, score):
+        try:
+            # self.__cur.execute("SELECT COUNT() as `count` FROM comments WHERE url LIKE ?", (url,))
+            # res = self.__cur.fetchone()
+            # if res['count'] > 0:
+            #     print("Статья с таким url уже существует")
+            #     return False
+
+            tm = math.floor(time.time())
+            self.__cur.execute("INSERT INTO comments VALUES(NULL, ?, ?, ?, ?)", (username, text, mfkname, score))
+            self.__db.commit()
+        except sqlite3.Error as e:
+            print("Ошибка добавления статьи в БД " + str(e))
+            return False
+
+        return True
+
+    def getComment(self, alias):
+        try:
+            self.__cur.execute(f"SELECT username, text, mfkname, score FROM comments WHERE mfkname LIKE {alias}")
+            # self.__cur.execute(f"SELECT * FROM comments")
+            # self.__cur.execute("SELECT * FROM comments")
+            res = self.__cur.fetchall()
+            if res:
+                return res
+        except sqlite3.Error as e:
+            print("Ошибка получения статьи из БД " + str(e))
+
+        return ()
 
 
 
