@@ -11,11 +11,24 @@
                    <div class="profile-ava"><img src="{{ url_for('userava') }}"></div>
                    <div class="profile-load">
                    <form action="{{url_for('upload')}}" method="POST" enctype="multipart/form-data">
-                            <input type="file" name="file">
-                            <input type="submit" value="Загрузить">
+
+                        <input class="my_btn" type="submit" value="Загрузить">
+
+                        <div style="margin: 15px 0px 10px 0px;">
+
+                            <label class="choose_file_label">
+                                <input style="display:none" type="file">
+                                Выбрать&nbsp;файл
+                                </input>
+                            </label>
+                        </div>
+
+
                    </form>
                    </div>
             </td>
+
+
 
             <td valign="top" class="profile-panel">
                    <ul class="profile-info">
@@ -26,6 +39,6 @@
          </tr>
 </table>
 
-<a class="my_a" href="{{url_for('logout')}}">Выйти из профиля</a>
+<a class="my_a" href="{{url_for('logout')}}"><button class="my_btn">Выйти из профиля</button></a>
 
 {% endblock %}

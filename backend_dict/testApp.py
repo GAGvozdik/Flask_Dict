@@ -7,7 +7,7 @@ import numpy as np
 
 from FDataBase import FDataBase
 from UserLogin import UserLogin
-from forms import LoginForm, RegisterForm
+from forms import LoginForm, RegisterForm, starsForm
 
 app = Flask(__name__)
 
@@ -99,8 +99,8 @@ def showMfk(alias):
         print("comments = ", my)
     print("altype = ", type(alias))
     print("comments = ", mfk)
-
-    return render_template('mfk.html', menu=menu, mfk=mfk, alias=alias, my_comments=dbase.getComment(alias))
+    stars_numb = 3
+    return render_template('mfk.html', menu=menu, mfk=mfk, alias=alias, my_comments=dbase.getComment(alias), stars_numb=stars_numb)
 
 
 @app.route("/addComment/<alias>", methods=['GET', 'POST'])
@@ -111,15 +111,18 @@ def addComment(alias):
     if not mfk:
         abort(404)
 
-    if request.method == "POST":
-        res = dbase.addComment(current_user.getName(), request.form['text'], str(alias), request.form['score'])
+    form = starsForm()
+    if form.validate_on_submit():
+        res = dbase.addComment(current_user.getName(), form.text.data, str(alias), form.score.data[-1])
+        print(str(form.score.data))
         if not res:
-            flash('Ошибка добавления статьи', category='error')
+            flash('Ошибка. Оценка не добавлена, попробуйте перезагрузить страницу', category='error')
         else:
-            flash('Статья добавлена успешно', category='success')
+            flash('Оценка добавлена успешно', category='success')
             # return redirect(url_for("showMfk(alias)"))
-
-    return render_template('comments.html', menu=menu, mfk=mfk, alias=alias, my_comments=dbase.getComment(alias))
+    form = starsForm()
+    stars_numb = 3
+    return render_template('comments.html', menu=menu, mfk=mfk, alias=alias, my_comments=dbase.getComment(alias), form=form, stars_numb=stars_numb)
 
 
 
@@ -217,13 +220,13 @@ def upload():
 @app.route("/contacts", methods=["POST", "GET"])
 @login_required
 def contacts():
-    if request.method == 'POST':
-        print(request.form)
-
-        if len(request.form['username']) > 2:
-            flash('Сообщение отправлено', category='success')
-        else:
-            flash('Ошибка отправки', category='error')
+    # if request.method == 'POST':
+    #     print(request.form)
+    #
+    #     if len(request.form['username']) > 2:
+    #         flash('Сообщение отправлено', category='success')
+    #     else:
+    #         flash('Ошибка отправки', category='error')
 
     return render_template('contacts.html', my_text='Contacts', menu=menu)
 

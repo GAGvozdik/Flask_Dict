@@ -1,13 +1,13 @@
 {% extends 'index.html' %}
 
 {% block content %}
-
+    В настоящее время не работает. Пишите на почту nagel2014@yandex.ru
     <form action="/contacts" method="post" class="form-contact">
         <p><label>Имя: </label> <input type="text" name="username" value="" requied />
         <p><label>Email: </label> <input type="text" name="email" value="" requied />
         <p><label>Сообщение:</label>
         <p><textarea name="message" rows=7 cols=40></textarea>
-        <p><input type="submit" value="Отправить" />
+        <p><input class="my_btn" type="submit" value="Отправить" />
     </form>
 
     {% for cat, msg in get_flashed_messages(True) %}

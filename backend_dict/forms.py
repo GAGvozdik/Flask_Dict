@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, BooleanField, PasswordField
-from wtforms.validators import DataRequired, Email, Length, EqualTo
+from wtforms import StringField, SubmitField, BooleanField, PasswordField, SelectField, RadioField
+from wtforms.widgets import TextArea
+from wtforms.validators import DataRequired, Email, Length, EqualTo, InputRequired
 import email_validator
 
 
@@ -21,3 +22,17 @@ class RegisterForm(FlaskForm):
 
     psw2 = PasswordField("Повтор пароля: ", validators=[DataRequired(), EqualTo('psw', message="Пароли не совпадают")])
     submit = SubmitField("Регистрация")
+
+my_choice = [('1', '8am'), ('2', '10am') ]
+class starsForm(FlaskForm):
+    text = StringField(u'Text', widget=TextArea())
+    score = RadioField('Stars', validators=[InputRequired()], choices=[
+        ('st5', 'Excellent'),
+        ('st4', 'Good'),
+        ('st3', 'OK'),
+        ('st2', 'Bad'),
+        ('st1', 'Terrible')
+    ])
+    # name = StringField("Имя: ", validators=[Length(min=4, max=100, message="Введите комментарий")])
+
+    submit = SubmitField("Оставить комментарий")
