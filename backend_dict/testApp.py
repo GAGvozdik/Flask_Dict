@@ -28,8 +28,9 @@ login_manager.login_message = "Авторизуйтесь для доступа 
 login_manager.login_message_category = "success"
 
 menu = [
-    {"title": "МФК", "url": "/dict"},
+    {"title": "МФК", "url": "/"},
     {"title": "Авторизация", "url": "/login"},
+    {"title": "Подобрать МФК", "url": "/question"},
     {"title": "Обратная связь", "url": "/contacts"},
     {"title": "О нас", "url": "/about"}]
 
@@ -73,8 +74,9 @@ def close_db(error):
     if hasattr(g, 'link_db'):
         g.link_db.close()
 
-@app.route("/dict")
+
 @app.route("/")
+@app.route("/dict")
 def dict():
     return render_template('dict.html', my_text='МФК', menu=menu, mfk_table=dbase.getMfkAnonce())
 
@@ -102,6 +104,12 @@ def showMfk(alias):
     stars_numb = 3
     return render_template('mfk.html', menu=menu, mfk=mfk, alias=alias, my_comments=dbase.getComment(alias), stars_numb=stars_numb)
 
+@app.route("/question", methods=['GET', 'POST'])
+@login_required
+def question():
+
+    return render_template('question.html', menu=menu)
+
 
 @app.route("/addComment/<alias>", methods=['GET', 'POST'])
 @login_required
@@ -113,16 +121,25 @@ def addComment(alias):
 
     form = starsForm()
     if form.validate_on_submit():
-        res = dbase.addComment(current_user.getName(), form.text.data, str(alias), form.score.data[-1])
-        print(str(form.score.data))
-        if not res:
-            flash('Ошибка. Оценка не добавлена, попробуйте перезагрузить страницу', category='error')
+        comments_numb = len(dbase.getUserCommentsNumb(current_user.getName()))
+        print('comments_numb')
+        print(comments_numb)
+        if comments_numb < 10:
+            res = dbase.addComment(current_user.getName(), form.text.data, str(alias), form.score.data[-1])
+            if not res:
+                flash('Ошибка. Оценка не добавлена, попробуйте перезагрузить страницу', category='error')
+            else:
+                flash('Оценка добавлена успешно', category='success')
+
+                dbase.updateUserCommentsNumb(comments_numb, current_user.getEmail())
+                print(comments_numb)
         else:
-            flash('Оценка добавлена успешно', category='success')
+            flash('Вы достигли лимита коментариев. Удалите комментарий, чтобы добавить новый', category='error')
+
             # return redirect(url_for("showMfk(alias)"))
     form = starsForm()
-    stars_numb = 3
-    return render_template('comments.html', menu=menu, mfk=mfk, alias=alias, my_comments=dbase.getComment(alias), form=form, stars_numb=stars_numb)
+
+    return render_template('comments.html', menu=menu, mfk=mfk, alias=alias, my_comments=dbase.getComment(alias), form=form)
 
 
 

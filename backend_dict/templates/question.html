@@ -7,8 +7,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Flask Dict</title>
     </head>
-    <body>
-
+    <body style="overflow: hidden;">
 
 
         <div class="mainmenu header">
@@ -23,17 +22,18 @@
             {% endfor %}
         </div>
 
-        <div class="content">
-            <h2>{{ my_text }}</h2>
-            <hr>
-            <div class="between_hr">
-                {% block content %}
-                        {{my_text}}
-                {% endblock %}
-            </div>
-            <hr>
-            <br>Вернуться на <a class="main_a" href="/dict">главную</a> страницу.
+        <div class="ask_content">
+              <iframe class='my_iframe' src="https://docs.google.com/forms/d/e/1FAIpQLSe0ykFQitWYE7s8oiXxaE0pDUpa1UO33K1AY9IB-g9UiYWTVA/viewform?usp=pp_url&entry.2033361812={{ current_user.getEmail() }}">
+              </iframe>
+
+
         </div>
+        <script>
+            var input = document.querySelector('input[jsname="YPqjbf"]');
+                input.setAttribute('data-initial-value', '222');
+        </script>
 
     </body>
 </html>
+
+

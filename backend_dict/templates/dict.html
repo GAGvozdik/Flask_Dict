@@ -5,11 +5,20 @@
     <ul class="list-posts">
         {% for m in mfk_table %}
             <li>
-                <p class="title">
 
-                    <a class="my_a" href="{{ url_for('showMfk', alias=m.id)}}">{{ m.id }}&nbsp;{{m.name}}&nbsp;{{m.faculty}}</a>
-                </p>
-                <p class="annonce">{{ m.online }}</p>
+
+                    <a  style="" class="my_a" href="{{ url_for('showMfk', alias=m.id)}}">
+                        <h2 style="margin: 0px 0px 10px 0px;">{{m.name}}</h2>
+                    </a>
+
+                    {{m.desc[:350]}} ...
+
+                    <br>
+
+                    <div style="color: #adb5bd; border: 2px solid #ADD8E6; border-radius: 7px; padding: 5px; margin: 10px 5px 0px 0px; display: inline-block;">
+                        <b>{{m.faculty}}</b>
+                    </div>
+
             </li>
         {% endfor %}
     </ul>

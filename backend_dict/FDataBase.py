@@ -55,7 +55,7 @@ class FDataBase:
                 return False
 
             tm = math.floor(time.time())
-            self.__cur.execute("INSERT INTO users VALUES(NULL, ?, ?, ?, NULL, ?)", (name, email, hpsw, tm))
+            self.__cur.execute("INSERT INTO users VALUES(NULL, ?, ?, ?, NULL, ?, ?)", (name, email, hpsw, 0, tm))
             self.__db.commit()
         except sqlite3.Error as e:
             print("Ошибка добавления пользователя в БД " + str(e))
@@ -102,9 +102,29 @@ class FDataBase:
             return False
         return True
 
+    def updateUserCommentsNumb(self, comments_numb, email):
+        try:
+            self.__cur.execute(f"UPDATE users SET comments_numb = ? WHERE email = ?", (comments_numb, email))
+            self.__db.commit()
+        except sqlite3.Error as e:
+            print("Ошибка обновления аватара в БД: " + str(e))
+            return False
+        return True
+
+    def getUserCommentsNumb(self, name):
+        try:
+            self.__cur.execute(f"SELECT * FROM comments WHERE username LIKE '{name}'")
+            res = self.__cur.fetchall()
+            if res:
+                return res
+        except sqlite3.Error as e:
+            print("Ошибка получения статьи из БД " + str(e))
+
+        return (False, False)
+
     def getMfk(self, alias):
         try:
-            self.__cur.execute(f"SELECT name, faculty, online FROM mfk WHERE id LIKE '{alias}' LIMIT 1")
+            self.__cur.execute(f"SELECT name, faculty, desc, online FROM mfk WHERE id LIKE '{alias}' LIMIT 1")
             res = self.__cur.fetchone()
             if res:
                 return res
@@ -115,7 +135,7 @@ class FDataBase:
 
     def getMfkAnonce(self):
         try:
-            self.__cur.execute(f"SELECT id, name, faculty, online FROM mfk ORDER BY id DESC")
+            self.__cur.execute(f"SELECT id, name, faculty, desc, online FROM mfk ORDER BY id DESC")
             res = self.__cur.fetchall()
             if res: return res
         except sqlite3.Error as e:

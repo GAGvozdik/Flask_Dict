@@ -19,6 +19,9 @@ class UserLogin(UserMixin):
     def getEmail(self):
         return self.__user['email'] if self.__user else "Без email"
 
+    def get_comments_numb(self):
+        return self.__user['comments_numb'] if self.__user else "Без комментариев"
+
     def getAvatar(self, app):
         img = None
         if not self.__user['avatar']:

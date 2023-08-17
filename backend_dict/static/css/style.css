@@ -45,14 +45,24 @@ body {
   margin: 80px 20px 20px 20px;
   color: #333;
 }
+.ask_content {
+    margin: 60px 0px 0px 0px;
+    color: #333;
 
-@media screen and (max-width: 650px) {
+}
+
+@media screen and (max-width: 720px) {
   .block {
     width: 100%;
   }
 
   .content {
     margin: 260px 20px 20px 20px;
+  }
+
+  .ask_content {
+    margin: 300px 0px 0px 0px;
+
   }
 }
 
@@ -170,10 +180,16 @@ ul.list-comments .annonce {
 
 
 .my_a {
+  color: #333;
+}
+.main_a {
   color: #adb5bd;
 }
 
 .my_a:hover {
+  color: #ff8642;
+}
+.main_a:hover {
   color: #ff8642;
 }
 
@@ -332,7 +348,15 @@ my_load_form input {
   border-radius: 10px;
   padding: 7px 20px;
   font-size: 16px;
+  border-style: outset;
 
+}
+
+.my_btn:hover {
+    border-style: inset;
+}
+.my_btn:active {
+    border-style: outset;
 }
 
 
@@ -349,6 +373,16 @@ my_load_form input {
 
 .choose_file_label:active{
     border-style: inset;
+}
+
+.my_iframe{
+	margin: 0%;
+    display:inline-block;
+
+    position: absolute;
+    width: 100%;
+    height: 100%;
+
 }
 
 

@@ -1,17 +1,20 @@
 {% extends 'index.html' %}
 
 {% block content %}
-здесь будет инфа по мфк <br>
-    <br>{{ mfk.name }}
 
+    <p class="title">
+
+        <h1>{{ mfk.name }}</h1>
+        <b>Факультет: {{ mfk.faculty }}</b>
+        <br>{{ mfk.desc }}
+
+    </p>
 
     {% for cat, msg in get_flashed_messages(True) %}
-        <div class="flash {{cat}}">{{msg}}</div>
+        <div class="flash {{cat}}">{{ msg }}</div>
     {% endfor %}
 
-<br>
-здесь комменты
-<br>
+
     <h2>Комментарии</h2>
     <ul class="list-comments">
         {% for m in my_comments %}
