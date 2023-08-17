@@ -135,7 +135,7 @@ class FDataBase:
 
     def getMfkAnonce(self):
         try:
-            self.__cur.execute(f"SELECT id, name, faculty, desc, online FROM mfk ORDER BY id DESC")
+            self.__cur.execute(f"SELECT id, name, faculty, desc, online, score FROM mfk ORDER BY id DESC")
             res = self.__cur.fetchall()
             if res: return res
         except sqlite3.Error as e:
@@ -144,7 +144,7 @@ class FDataBase:
         return []
 
 
-    def addComment(self, username, text, mfkname, score):
+    def addComment(self, username, text, mfkname, score, mfktetle):
         try:
             # self.__cur.execute("SELECT COUNT() as `count` FROM comments WHERE url LIKE ?", (url,))
             # res = self.__cur.fetchone()
@@ -153,7 +153,7 @@ class FDataBase:
             #     return False
 
             tm = math.floor(time.time())
-            self.__cur.execute("INSERT INTO comments VALUES(NULL, ?, ?, ?, ?)", (username, text, mfkname, score))
+            self.__cur.execute("INSERT INTO comments VALUES(NULL, ?, ?, ?, ?, ?)", (username, text, mfkname, score, mfktetle))
             self.__db.commit()
         except sqlite3.Error as e:
             print("Ошибка добавления статьи в БД " + str(e))
@@ -174,21 +174,39 @@ class FDataBase:
 
         return ()
 
+    def getMfkScore(self, alias):
+        try:
+            self.__cur.execute(f"SELECT score FROM comments WHERE mfkname LIKE {alias}")
+            # self.__cur.execute(f"SELECT * FROM comments")
+            # self.__cur.execute("SELECT * FROM comments")
+            res = self.__cur.fetchall()
+            if res:
+                return res
+        except sqlite3.Error as e:
+            print("Ошибка получения статьи из БД " + str(e))
+
+        return ()
 
 
+    def updateMfkScore(self, mfkname, score):
+        try:
+            self.__cur.execute(f"UPDATE mfk SET score = ? WHERE id = ?", (score, mfkname))
+            self.__db.commit()
+        except sqlite3.Error as e:
+            print("Ошибка обновления оценок мфк в БД: " + str(e))
+            return False
+        return True
 
 
-
-
-
-
-
-
-
-
-
-
-
+    # def getUsersMfkName(self, id):
+    #     try:
+    #         self.__cur.execute(f"SELECT id, name, faculty, desc, online, score FROM mfk ORDER BY id DESC")
+    #         res = self.__cur.fetchall()
+    #         if res: return res
+    #     except sqlite3.Error as e:
+    #         print("Ошибка получения статьи из БД " + str(e))
+    #
+    #     return []
 
 
 # id

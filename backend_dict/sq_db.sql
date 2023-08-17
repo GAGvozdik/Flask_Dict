@@ -26,7 +26,8 @@ id integer PRIMARY KEY AUTOINCREMENT,
 username text,
 text text,
 mfkname text,
-score text
+score text,
+mfktitle text
 );
 
 --name text,

@@ -34,12 +34,40 @@
                    <ul class="profile-info">
                    <li>Имя: {{ current_user.getName() }}</li>
                    <li>Email: {{ current_user.getEmail() }}</li>
-                   <li>Число комментариев: {{ current_user.get_comments_numb() }}</li>
                    </ul>
             </td>
          </tr>
 </table>
 
 <a class="my_a" href="{{url_for('logout')}}"><button class="my_btn">Выйти из профиля</button></a>
+
+
+
+    <h2>Ваши оценки</h2>
+    <ul class="list-comments">
+        {% for m in your_comments %}
+            <li>
+                <p style="margin: 0px 0 0px 0;" class="title">
+
+                    {{m.mfktitle}}
+
+                    <div class="comment_stars_background comment_container container">
+                      <div class="comment_stars_background container__items">
+                        {% for i in range(m.score|int) %}
+                          <label class="comment_stars_background my_label" for="">
+                            <div class="star-stroke">
+                              <div class=""></div>
+                            </div>
+                          </label>
+                        {% endfor %}
+                      </div>
+                    </div>
+
+
+                <p class="annonce">{{ m.text }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+
 
 {% endblock %}

@@ -65,7 +65,7 @@ mfk_list=read_table("data.db")
 for i in range(len(mfk_list)):
     tm = math.floor(time.time())
     tm = math.floor(time.time())
-    insert_varible_into_table(mfk_list[i][0], mfk_list[i][1], mfk_list[i][2], "", "", "")
+    insert_varible_into_table(mfk_list[i][0], mfk_list[i][1], mfk_list[i][2], "", "", "0")
 
 
 

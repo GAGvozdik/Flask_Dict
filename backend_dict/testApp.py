@@ -125,13 +125,28 @@ def addComment(alias):
         print('comments_numb')
         print(comments_numb)
         if comments_numb < 10:
-            res = dbase.addComment(current_user.getName(), form.text.data, str(alias), form.score.data[-1])
+            res = dbase.addComment(current_user.getName(), form.text.data, str(alias), form.score.data[-1], mfk[0])
             if not res:
                 flash('Ошибка. Оценка не добавлена, попробуйте перезагрузить страницу', category='error')
             else:
                 flash('Оценка добавлена успешно', category='success')
 
                 dbase.updateUserCommentsNumb(comments_numb, current_user.getEmail())
+
+                # ----------------------------------------------
+                score_list = dbase.getMfkScore(alias)
+                mfk_score = 0
+                len_score_list = 0
+                for i in score_list:
+                    for j in i:
+                        print('j = ', j)
+                        mfk_score += int(j)
+                        len_score_list += 1
+
+                mfk_score = round(mfk_score /len_score_list)
+                print('mfk_score, len_score_list = ', mfk_score, len_score_list)
+                dbase.updateMfkScore(alias, mfk_score)
+
                 print(comments_numb)
         else:
             flash('Вы достигли лимита коментариев. Удалите комментарий, чтобы добавить новый', category='error')
@@ -192,7 +207,21 @@ def logout():
 @app.route('/profile')
 @login_required
 def profile():
-    return render_template('profile.html', my_text="Your Profile", menu=menu)
+    for i in dbase.getUserCommentsNumb(current_user.getName()):
+        print("i.score = ", i)
+
+    your_comments = dbase.getUserCommentsNumb(current_user.getName())
+    if your_comments == (False, False):
+        class Person:
+            def __init__(self, name):
+                self.name = name
+
+        your_comments = [Person("Tom")]
+        your_comments[0].score = 0
+        your_comments[0].mfkname = 0
+        your_comments[0].mfktitle = 0
+
+    return render_template('profile.html', my_text="Your Profile", menu=menu, your_comments=your_comments)
 
 
 @login_manager.user_loader
