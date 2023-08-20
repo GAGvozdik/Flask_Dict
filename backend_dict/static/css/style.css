@@ -385,7 +385,10 @@ my_load_form input {
 
 }
 
-
+.mfk_on_main_page:hover{
+    box-shadow: none;
+    border-radius: 10px;
+}
 
 
 
