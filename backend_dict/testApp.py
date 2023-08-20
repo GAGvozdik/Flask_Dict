@@ -10,7 +10,7 @@ from random import randint
 from FDataBase import FDataBase
 from UserLogin import UserLogin
 from forms import LoginForm, RegisterForm, starsForm, ValidateForm
-
+from test import add_mfk_to_db
 app = Flask(__name__)
 
 # конфигурация
@@ -28,7 +28,7 @@ mail=Mail(app)
 app.config["MAIL_SERVER"]='smtp.gmail.com'
 app.config["MAIL_PORT"]=465
 app.config["MAIL_USERNAME"]='gvozdikgeorge@gmail.com'
-app.config['MAIL_PASSWORD']='ydnvhhhewdfewbvg'                    #you have to give your password of gmail account
+app.config['MAIL_PASSWORD']='ydnvhhhewdfewbvg'
 app.config['MAIL_USE_TLS']=False
 app.config['MAIL_USE_SSL']=True
 
@@ -52,6 +52,7 @@ menu = [
     {"title": "Обратная связь", "url": "/contacts"},
     {"title": "О нас", "url": "/about"}]
 
+max_commetns_numb = 7
 
 def connect_db():
     conn = sqlite3.connect(app.config['DATABASE'])
@@ -66,6 +67,8 @@ def create_db():
         db.cursor().executescript(f.read())
     db.commit()
     db.close()
+
+    add_mfk_to_db()
 
 
 def get_db():
@@ -142,30 +145,42 @@ def addComment(alias):
         comments_numb = len(dbase.getUserCommentsNumb(current_user.getName()))
         print('comments_numb')
         print(comments_numb)
-        if comments_numb < 10:
-            res = dbase.addComment(current_user.getName(), form.text.data, str(alias), form.score.data[-1], mfk[0])
-            if not res:
-                flash('Ошибка. Оценка не добавлена, попробуйте перезагрузить страницу', category='error')
-            else:
-                flash('Оценка добавлена успешно', category='success')
+        if comments_numb < max_commetns_numb:
 
-                dbase.updateUserCommentsNumb(comments_numb, current_user.getEmail())
-
-                # ----------------------------------------------
-                score_list = dbase.getMfkScore(alias)
-                mfk_score = 0
-                len_score_list = 0
-                for i in score_list:
+            is_comment_already_added = 0
+            if dbase.getUserCommentsNumb(current_user.getName()) != (False, False):
+                for i in dbase.getUserCommentsNumb(current_user.getName()):
                     for j in i:
-                        print('j = ', j)
-                        mfk_score += int(j)
-                        len_score_list += 1
+                        if j == mfk[0]:
+                            is_comment_already_added = 1
+                        print('j, mfk[0] = ', j, mfk[0])
 
-                mfk_score = round(mfk_score /len_score_list)
-                print('mfk_score, len_score_list = ', mfk_score, len_score_list)
-                dbase.updateMfkScore(alias, mfk_score)
+            if is_comment_already_added == 0:
+                res = dbase.addComment(current_user.getName(), form.text.data, str(alias), form.score.data[-1], mfk[0])
+                if not res:
+                    flash('Ошибка. Оценка не добавлена, попробуйте перезагрузить страницу', category='error')
+                else:
+                    flash('Оценка добавлена успешно', category='success')
 
-                print(comments_numb)
+                    dbase.updateUserCommentsNumb(comments_numb, current_user.getEmail())
+
+                    # ----------------------------------------------
+                    score_list = dbase.getMfkScore(alias)
+                    mfk_score = 0
+                    len_score_list = 0
+                    for i in score_list:
+                        for j in i:
+                            print('j = ', j)
+                            mfk_score += int(j)
+                            len_score_list += 1
+
+                    mfk_score = round(mfk_score /len_score_list)
+                    print('mfk_score, len_score_list = ', mfk_score, len_score_list)
+                    dbase.updateMfkScore(alias, mfk_score)
+
+                    print(comments_numb)
+            else:
+                flash('Вы уже оставляли оценку этому мфк', category='error')
         else:
             flash('Вы достигли лимита коментариев. Удалите комментарий, чтобы добавить новый', category='error')
 
@@ -249,18 +264,6 @@ def verify():
             flash("Неверный код подтверждения", "error")
 
     return render_template('verify.html', form_code=form_code, my_mail=my_mail)
-
-
-# @app.route('/validate',methods=['POST'])
-# def validate():
-#     form = ValidateForm()
-#     user_otp=request.form['otp']
-#     if otp==int(user_otp):
-#         return "<h3>Email varification succesfull</h3>"
-#     return "<h3>Please Try Again</h3>"
-
-
-#================================================================================
 
 @app.route('/logout')
 @login_required

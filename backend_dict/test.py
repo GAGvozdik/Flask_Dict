@@ -3,16 +3,15 @@ import sqlite3
 import math
 import time
 
-file = open("mfk_list.txt", "r", encoding="utf-8")
-
-mfk_list = []
-
-for line in file:
-    # print(line.split('\t'))
-    if len(line.split('\t')) == 4:
-        mfk_list.append(np.array(line.split('\t')))
-
-mfk_list = np.array(mfk_list)
+# file = open("mfk_list.txt", "r", encoding="utf-8")
+#
+# mfk_list = []
+#
+# for line in file:
+#     if len(line.split('\t')) == 4:
+#         mfk_list.append(np.array(line.split('\t')))
+# mfk_list = np.array(mfk_list)
+#
 
 # tm = math.floor(time.time())
 
@@ -50,7 +49,7 @@ def read_table(db):
 
         cursor.execute(sqlite_insert_with_param)
         sqlite_connection.commit()
-        print("Переменные Python успешно вставлены в таблицу")
+        # print("Переменные Python успешно вставлены в таблицу")
         return cursor.fetchall()
         cursor.close()
 
@@ -60,12 +59,18 @@ def read_table(db):
         if sqlite_connection:
             sqlite_connection.close()
 
-mfk_list=read_table("data.db")
 
-for i in range(len(mfk_list)):
-    tm = math.floor(time.time())
-    tm = math.floor(time.time())
-    insert_varible_into_table(mfk_list[i][0], mfk_list[i][1], mfk_list[i][2], "", "", "0")
+def add_mfk_to_db():
+
+    mfk_list=read_table("data.db")
+
+    for i in range(len(mfk_list)):
+        tm = math.floor(time.time())
+        tm = math.floor(time.time())
+        insert_varible_into_table(mfk_list[i][0], mfk_list[i][1], mfk_list[i][2], "", "", "0")
+
+
+
 
 
 

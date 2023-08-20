@@ -40,3 +40,4 @@ class starsForm(FlaskForm):
     # name = StringField("Имя: ", validators=[Length(min=4, max=100, message="Введите комментарий")])
 
     submit = SubmitField("Оставить комментарий")
+
