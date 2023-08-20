@@ -189,6 +189,16 @@ ul.list-comments .annonce {
 .my_a:hover {
   color: #ff8642;
 }
+
+.my_desc:hover {
+  color: #333;
+}
+
+.my_desc {
+  margin-bottom: 40px;
+  color: #333;
+}
+
 .main_a:hover {
   color: #ff8642;
 }

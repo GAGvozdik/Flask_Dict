@@ -4,36 +4,38 @@
 
     <ul class="list-posts">
         {% for m in mfk_table %}
-            <li class="mfk_on_main_page">
+            <a style="" class="my_a" href="{{ url_for('showMfk', alias=m.id)}}">
+                <li class="mfk_on_main_page">
 
 
-                    <a  style="" class="my_a" href="{{ url_for('showMfk', alias=m.id)}}">
+
                         <h2 style="margin: 0px 0px 10px 0px;">{{m.name}}</h2>
-                    </a>
-
-                    {{m.desc[:350]}} ...
-
-                    <br>
-
-                    <div style="color: #adb5bd; border: 2px solid #ADD8E6; border-radius: 7px; padding: 5px; margin: 10px 5px 0px 0px; display: inline-block;">
-                        <b>{{m.faculty}}</b>
-                    </div>
-
-                    <div class="comment_stars_background comment_container container">
-                      <div class="comment_stars_background container__items">
-                        {% for i in range(m.score|int) %}
-                          <label class="comment_stars_background my_label" for="">
-                            <div class="star-stroke">
-                              <div class=""></div>
-                            </div>
-                          </label>
-                        {% endfor %}
-                      </div>
-                    </div>
 
 
+                        <div class="my_desc">{{m.desc[:350]}} ...</div>
 
-            </li>
+                        <br>
+
+                        <div style="color: #adb5bd; border: 2px solid #ADD8E6; border-radius: 7px; padding: 5px; margin: 10px 5px 0px 0px; display: inline-block;">
+                            <b>{{m.faculty}}</b>
+                        </div>
+
+                        <div class="comment_stars_background comment_container container">
+                          <div class="comment_stars_background container__items">
+                            {% for i in range(m.score|int) %}
+                              <label class="comment_stars_background my_label" for="">
+                                <div class="star-stroke">
+                                  <div class=""></div>
+                                </div>
+                              </label>
+                            {% endfor %}
+                          </div>
+                        </div>
+
+
+
+                </li>
+            </a>
         {% endfor %}
     </ul>
 
