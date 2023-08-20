@@ -23,7 +23,11 @@ class RegisterForm(FlaskForm):
     psw2 = PasswordField("Повтор пароля: ", validators=[DataRequired(), EqualTo('psw', message="Пароли не совпадают")])
     submit = SubmitField("Регистрация")
 
-my_choice = [('1', '8am'), ('2', '10am') ]
+class ValidateForm(FlaskForm):
+    email_code = StringField("Введите код подтверждения: ")
+    submit = SubmitField("Подтвердить")
+
+
 class starsForm(FlaskForm):
     text = StringField(u'Text', widget=TextArea())
     score = RadioField('Stars', validators=[InputRequired()], choices=[

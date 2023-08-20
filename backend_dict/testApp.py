@@ -4,10 +4,12 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 import sqlite3
 import os
 import numpy as np
+from flask_mail import Mail,Message
+from random import randint
 
 from FDataBase import FDataBase
 from UserLogin import UserLogin
-from forms import LoginForm, RegisterForm, starsForm
+from forms import LoginForm, RegisterForm, starsForm, ValidateForm
 
 app = Flask(__name__)
 
@@ -18,6 +20,22 @@ SECRET_KEY = 'fdgfh78@#5?>gfhf89dx,v06k'
 USERNAME = 'admin'
 PASSWORD = '123'
 MAX_CONTENT_LENGTH = 1024 * 1024
+
+# mail config
+
+mail=Mail(app)
+
+app.config["MAIL_SERVER"]='smtp.gmail.com'
+app.config["MAIL_PORT"]=465
+app.config["MAIL_USERNAME"]='gvozdikgeorge@gmail.com'
+app.config['MAIL_PASSWORD']='ydnvhhhewdfewbvg'                    #you have to give your password of gmail account
+app.config['MAIL_USE_TLS']=False
+app.config['MAIL_USE_SSL']=True
+
+mail=Mail(app)
+
+
+
 
 app.config.from_object(__name__)
 app.config.update(dict(DATABASE=os.path.join(app.root_path, 'flsite.db')))
@@ -184,17 +202,65 @@ def login():
 @app.route("/register", methods=["POST", "GET"])
 def register():
     form = RegisterForm()
-    if form.validate_on_submit():
-        hash = generate_password_hash(request.form['psw'])
-        res = dbase.addUser(form.name.data, form.email.data, hash)
-        if res:
-            flash("Вы успешно зарегистрированы", "success")
-            return redirect(url_for('login'))
-        else:
-            flash("Ошибка при добавлении в БД", "error")
 
+    if form.validate_on_submit():
+        msg = Message(subject='Verification code', sender='gvozdikgeorge@gmail.com', recipients=[form.email.data])
+        otp = randint(000000, 999999)
+        msg.body = str(otp)
+        mail.send(msg)
+
+        session['name'] = form.name.data
+        session['email'] = form.email.data
+        session['password'] = form.psw.data
+        session['otp'] = otp
+        return redirect(url_for('verify'))
     return render_template("register.html", menu=menu, my_text="Регистрация", form=form)
 
+
+@app.route('/verify', methods=["POST", "GET"])
+def verify():
+    form_code = ValidateForm()
+
+    email = session.get('email')
+    my_mail = email[:3] + "@" * len(email[3:])
+
+    otp = session.get("otp")
+
+    print(0)
+
+    if form_code.validate_on_submit():
+        print(1)
+        user_otp = form_code.email_code.data
+        print(2)
+        if str(otp) == user_otp:
+            print(3)
+            flash("Email подтвержден", "success")
+
+            hash = generate_password_hash(session.get('password'))
+            res = dbase.addUser(session.get('name'), session.get('email'), hash)
+            print(5)
+            if res:
+                flash("Вы успешно зарегистрированы", "success")
+                return redirect(url_for('login'))
+            else:
+                flash("Ошибка при добавлении в БД", "error")
+        else:
+            print(4)
+            flash("Неверный код подтверждения", "error")
+
+    return render_template('verify.html', form_code=form_code, my_mail=my_mail)
+
+
+# @app.route('/validate',methods=['POST'])
+# def validate():
+#     form = ValidateForm()
+#     user_otp=request.form['otp']
+#     if otp==int(user_otp):
+#         return "<h3>Email varification succesfull</h3>"
+#     return "<h3>Please Try Again</h3>"
+
+
+#================================================================================
 
 @app.route('/logout')
 @login_required
@@ -216,10 +282,10 @@ def profile():
             def __init__(self, name):
                 self.name = name
 
-        your_comments = [Person("Tom")]
-        your_comments[0].score = 0
-        your_comments[0].mfkname = 0
-        your_comments[0].mfktitle = 0
+        your_comments = [Person("")]
+        your_comments[0].score = ""
+        your_comments[0].mfkname = "Вы еще не ставили оценки"
+        your_comments[0].mfktitle = "Вы еще не ставили оценки"
 
     return render_template('profile.html', my_text="Your Profile", menu=menu, your_comments=your_comments)
 

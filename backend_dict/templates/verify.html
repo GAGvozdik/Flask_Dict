@@ -5,11 +5,13 @@
 {% for cat, msg in get_flashed_messages(True) %}
 <div class="flash {{cat}}">{{msg}}</div>
 {% endfor %}
-<form action="/register" method="post" class="form-contact">
 
-    {{ form.hidden_tag() }}
+Вам был оправлен код подверждения на почту: {{ my_mail }}
+<form action="/verify" method="post" class="form-contact">
 
-    {% for field in form if field.name not in ['csrf_token', 'submit'] -%}
+    {{ form_code.hidden_tag() }}
+
+    {% for field in form_code if field.name not in ['csrf_token', 'submit'] -%}
         <br>
          {{ field.label() }}
          {% if field.errors %}
@@ -24,9 +26,7 @@
          {% endif %}
     {% endfor %}
 
-    <br>{{ form.submit(class="my_btn") }}
+    <br>{{ form_code.submit(class="my_btn") }}
 
 </form>
-
-
 {% endblock %}
