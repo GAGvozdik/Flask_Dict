@@ -219,16 +219,22 @@ def register():
     form = RegisterForm()
 
     if form.validate_on_submit():
-        msg = Message(subject='Verification code', sender='gvozdikgeorge@gmail.com', recipients=[form.email.data])
-        otp = randint(000000, 999999)
-        msg.body = str(otp)
-        mail.send(msg)
+        if dbase.getUsersE(form.email.data) == (False, False):
+            if dbase.getUsersN(form.name.data) == (False, False):
+                msg = Message(subject='Verification code', sender='gvozdikgeorge@gmail.com', recipients=[form.email.data])
+                otp = randint(000000, 999999)
+                msg.body = str(otp)
+                mail.send(msg)
 
-        session['name'] = form.name.data
-        session['email'] = form.email.data
-        session['password'] = form.psw.data
-        session['otp'] = otp
-        return redirect(url_for('verify'))
+                session['name'] = form.name.data
+                session['email'] = form.email.data
+                session['password'] = form.psw.data
+                session['otp'] = otp
+                return redirect(url_for('verify'))
+            else:
+                flash("Пользователь с таким именем уже зарегистрирован", "error")
+        else:
+            flash("Пользователь с такой почтой уже зарегистрирован", "error")
     return render_template("register.html", menu=menu, my_text="Регистрация", form=form)
 
 

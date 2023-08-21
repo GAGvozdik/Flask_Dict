@@ -197,6 +197,27 @@ class FDataBase:
             return False
         return True
 
+    def getUsersE(self, email):
+        try:
+            self.__cur.execute(f"SELECT * FROM users WHERE email LIKE '{email}'")
+            res = self.__cur.fetchall()
+            if res:
+                return res
+        except sqlite3.Error as e:
+            print("Ошибка получения статьи из БД " + str(e))
+
+        return (False, False)
+
+    def getUsersN(self, name):
+        try:
+            self.__cur.execute(f"SELECT * FROM users WHERE name LIKE '{name}'")
+            res = self.__cur.fetchall()
+            if res:
+                return res
+        except sqlite3.Error as e:
+            print("Ошибка получения статьи из БД " + str(e))
+
+        return (False, False)
 
     # def getUsersMfkName(self, id):
     #     try:
