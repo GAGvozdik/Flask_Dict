@@ -11,40 +11,36 @@
 
 
 
-        <div class="mainmenu header">
+        <div class="menu" id="target">
+                <div style="color: var(--menu-blue); float: center; margin: 20px; margin-top: 100px; box-sizing: border-box; font-size: 20px;" class="title"><h1>НАВИГАЦИЯ</h1></div>
+
             {% for m in menu %}
 
-                <a href="{{m.url}}">
-                    <div class="block">
-                        {{m.title}}
-                    </div>
-                </a>
-
+                    <a href="{{m.url}}">
+                        <div class="block">
+                            {{m.title}}
+                        </div>
+                    </a>
             {% endfor %}
         </div>
 
-
-
-
-	<div class="menu">
-		<div class="title"><h1>NAVIGATION</h1></div>
-		<div class="list_menu">
-			<ul>
-                {% for m in menu %}
-                    <li>
-                        <a href="{{m.url}}">
-
-                                {{m.title}}
-
-                        </a>
-                    </li>
-                {% endfor %}
-			</ul>
-		</div>
-		<div class="footer_menu">
-<!--			<p>©ssttrano 2020-2021</p>-->
-		</div>
-	</div>
+        <nav>
+          <div class="navbar">
+            <div class="menu_container nav-container">
+                <div class="" onclick="toggleLeft()">
+                    <input class="checkbox" type="checkbox" name="" id="" />
+                    <div class="hamburger-lines">
+                      <span class="line line1"></span>
+                      <span class="line line2"></span>
+                      <span class="line line3"></span>
+                    </div>
+                </div>
+              <div class="logo">
+                <!--<h1>Navbar</h1>-->
+              </div>
+            </div>
+          </div>
+        </nav>
 
 
         <div class="content">
@@ -60,4 +56,24 @@
         </div>
 
     </body>
+
+    <script>
+
+        var clickCount = 0;
+
+        function toggleLeft() {
+            clickCount++;
+            var targetDiv = document.getElementById("target");
+
+            if (clickCount % 2 === 1) {
+                targetDiv.style.left = "0%";
+                targetDiv.classList.remove("hidden");
+            }
+            else {
+                targetDiv.style.left = "-100%";
+                targetDiv.classList.add("hidden");
+            }
+        }
+
+    </script>
 </html>
