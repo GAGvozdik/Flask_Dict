@@ -37,10 +37,20 @@ class ValidateForm(FlaskForm):
 #         </div>
 #     </div>''')
 
+class recoveryForm(FlaskForm):
+    email = StringField("Email: ", validators=[Email("Некорректный email")])
+    submit = SubmitField("Подтвердить")
+
+
+class new_psw_form(FlaskForm):
+    psw = PasswordField("Пароль: ", validators=[DataRequired(),
+                                                Length(min=4, max=100,
+                                                       message="Пароль должен быть от 4 до 100 символов")])
+    psw2 = PasswordField("Повтор пароля: ", validators=[DataRequired(), EqualTo('psw', message="Пароли не совпадают")])
+    submit = SubmitField("Подтвердить")
+
 
 class starsForm(FlaskForm):
-
-
     text = StringField(u'Text', widget=TextArea())
     score = RadioField('Stars', validators=[InputRequired()], choices=[
         ('st5', 'Excellent'),

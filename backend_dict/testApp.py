@@ -9,7 +9,7 @@ from random import randint
 
 from FDataBase import FDataBase
 from UserLogin import UserLogin
-from forms import LoginForm, RegisterForm, starsForm, ValidateForm
+from forms import LoginForm, RegisterForm, starsForm, ValidateForm, recoveryForm, new_psw_form
 from test import add_mfk_to_db
 app = Flask(__name__)
 
@@ -238,6 +238,28 @@ def register():
     return render_template("register.html", menu=menu, my_text="Регистрация", form=form)
 
 
+@app.route('/password_recovery', methods=["POST", "GET"])
+def password_recovery():
+    form = recoveryForm()
+    if form.validate_on_submit():
+        if dbase.getUsersE(form.email.data) != (False, False):
+
+            msg = Message(subject='Verification code', sender='gvozdikgeorge@gmail.com', recipients=[form.email.data])
+            otp = randint(000000, 999999)
+            msg.body = str(otp)
+            mail.send(msg)
+
+            session['recovery_email'] = form.email.data
+            session['recovery_email_code'] = otp
+
+            flash("На вашу почту был выслан код подтверждения", "success")
+            return redirect(url_for('verify_recovery'))
+        else:
+            flash("Пользователь с такой почтой не найден", "error")
+            return redirect(url_for('login'))
+    return render_template('password_recovery.html', form=form)
+
+
 @app.route('/verify', methods=["POST", "GET"])
 def verify():
     form_code = ValidateForm()
@@ -247,19 +269,13 @@ def verify():
 
     otp = session.get("otp")
 
-    print(0)
-
     if form_code.validate_on_submit():
-        print(1)
         user_otp = form_code.email_code.data
-        print(2)
         if str(otp) == user_otp:
-            print(3)
             flash("Email подтвержден", "success")
 
             hash = generate_password_hash(session.get('password'))
             res = dbase.addUser(session.get('name'), session.get('email'), hash)
-            print(5)
             if res:
                 flash("Вы успешно зарегистрированы", "success")
                 return redirect(url_for('login'))
@@ -270,6 +286,45 @@ def verify():
             flash("Неверный код подтверждения", "error")
 
     return render_template('verify.html', form_code=form_code, my_mail=my_mail)
+
+@app.route('/verify_recovery', methods=["POST", "GET"])
+def verify_recovery():
+    form = ValidateForm()
+
+    email = session.get('recovery_email')
+    my_mail = email[:3] + "@" * len(email[3:])
+
+    otp = session.get("recovery_email_code")
+
+    if form.validate_on_submit():
+
+        user_otp = form.email_code.data
+
+        if str(otp) == user_otp:
+            flash("Email подтвержден", "success")
+            return redirect(url_for('new_psw'))
+        else:
+            print(4)
+            flash("Неверный код подтверждения", "error")
+
+    return render_template('verify_recovery.html', form=form, my_mail=my_mail)
+
+@app.route('/new_psw', methods=["POST", "GET"])
+def new_psw():
+    form = new_psw_form()
+
+    email = session.get('recovery_email')
+
+    if form.validate_on_submit():
+
+            hash = generate_password_hash(form.psw.data)
+            res = dbase.updatePsw(email, hash)
+            if res:
+                flash("Пароль успешно изменен", "success")
+                return redirect(url_for('login'))
+            else:
+                flash("Ошибка при добавлении в БД", "error")
+    return render_template('new_psw.html', form=form)
 
 @app.route('/logout')
 @login_required

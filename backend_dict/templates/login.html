@@ -32,9 +32,28 @@
         </div>
 
 
-        <a class="main_a" href="{{url_for('register')}}">Регистрация</a>
+
     </form>
 
+    <a href="{{url_for('register')}}">
+      <div style="margin-bottom: 5px;" class="button_container">
+        <div class="center">
+          <button class="btn">
+            <span style="font-size: 14px;" class="btn_span">Регистрация</span>
+          </button>
+        </div>
+      </div>
+    </a>
+
+    <a class="my_a" href="{{ url_for('password_recovery')}}">
+          <div class="button_container">
+            <div class="center">
+              <button class="btn">
+                <span style="font-size: 14px;" class="btn_span">Восстановить пароль</span>
+              </button>
+            </div>
+          </div>
+    </a>
     <br>
     {% for cat, msg in get_flashed_messages(True) %}
         <div class="flash {{cat}}">{{msg}}</div>

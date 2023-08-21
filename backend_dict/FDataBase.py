@@ -219,6 +219,15 @@ class FDataBase:
 
         return (False, False)
 
+    def updatePsw(self, email, psw):
+        try:
+            self.__cur.execute(f"UPDATE users SET psw = ? WHERE email = ?", (psw, email))
+            self.__db.commit()
+        except sqlite3.Error as e:
+            print("Ошибка обновления оценок мфк в БД: " + str(e))
+            return False
+        return True
+
     # def getUsersMfkName(self, id):
     #     try:
     #         self.__cur.execute(f"SELECT id, name, faculty, desc, online, score FROM mfk ORDER BY id DESC")
