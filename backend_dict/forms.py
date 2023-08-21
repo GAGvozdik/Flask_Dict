@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, BooleanField, PasswordField, SelectField, RadioField
+import flask
+from wtforms import StringField, SubmitField, BooleanField, PasswordField, SelectField, RadioField, Label
 from wtforms.widgets import TextArea
 from wtforms.validators import DataRequired, Email, Length, EqualTo, InputRequired
 import email_validator
@@ -27,8 +28,19 @@ class ValidateForm(FlaskForm):
     email_code = StringField("Введите код подтверждения: ")
     submit = SubmitField("Подтвердить")
 
+# submit_value = flask.Markup('''
+#     <div class="button_container">
+#         <div class="center">
+#             <button class="btn" type="submit">
+#                 <span class="btn_span">Оставить оценку</span>
+#             </button>
+#         </div>
+#     </div>''')
+
 
 class starsForm(FlaskForm):
+
+
     text = StringField(u'Text', widget=TextArea())
     score = RadioField('Stars', validators=[InputRequired()], choices=[
         ('st5', 'Excellent'),
@@ -37,7 +49,9 @@ class starsForm(FlaskForm):
         ('st2', 'Bad'),
         ('st1', 'Terrible')
     ])
-    # name = StringField("Имя: ", validators=[Length(min=4, max=100, message="Введите комментарий")])
+    submit = SubmitField('Подтвердить')
 
-    submit = SubmitField("Оставить комментарий")
+
+
+    # submit = SubmitField(flask.Markup('<span class="btn_span"></span>'))
 

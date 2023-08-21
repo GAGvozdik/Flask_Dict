@@ -39,7 +39,15 @@
          </tr>
 </table>
 
-<a class="my_a" href="{{url_for('logout')}}"><button class="my_btn">Выйти из профиля</button></a>
+<a class="my_a" href="{{url_for('logout')}}">
+  <div class="button_container">
+    <div class="center">
+      <button class="btn">
+        <span class="btn_span">Выйти из профиля</span>
+      </button>
+    </div>
+  </div>
+</a>
 
 
 
@@ -66,7 +74,7 @@
 
                 <p class="annonce">{{ m.text }}</p>
             </li>
-            <button class="my_btn">Удалить комментарий</button>
+            <!--<button class="my_btn">Удалить комментарий</button>-->
         {% endfor %}
     </ul>
 

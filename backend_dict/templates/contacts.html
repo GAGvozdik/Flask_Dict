@@ -7,7 +7,16 @@
         <p><label>Email: </label> <input type="text" name="email" value="" requied />
         <p><label>Сообщение:</label>
         <p><textarea name="message" rows=7 cols=40></textarea>
-        <p><input class="my_btn" type="submit" value="Отправить" />
+        <p>
+        <div class="button_container">
+            <div class="center">
+                <button class="btn" type="submit">
+                    <span class="btn_span">Оставить оценку</span>
+                </button>
+            </div>
+        </div>
+
+
     </form>
 
     {% for cat, msg in get_flashed_messages(True) %}

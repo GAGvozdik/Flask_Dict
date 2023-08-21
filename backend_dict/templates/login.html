@@ -22,9 +22,17 @@
     {% endfor %}
 
         <br>{{ form.remember.label() }} {{ form.remember() }}
-        <br>{{ form.submit(class="my_btn") }}
+<!--        <br>{{ form.submit(class="my_btn") }}-->
+        <div  style="margin-bottom: 5px;" class="button_container">
+            <div class="center">
+                <button class="btn" type="submit">
+                    <span class="btn_span">Войти</span>
+                </button>
+            </div>
+        </div>
 
-        <br><br><a class="my_a" href="{{url_for('register')}}">Регистрация</a>
+
+        <a class="main_a" href="{{url_for('register')}}">Регистрация</a>
     </form>
 
     <br>

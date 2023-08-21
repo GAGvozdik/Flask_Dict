@@ -60,7 +60,18 @@
 
 
 
-        <br><br><div>{{ form.submit(class="my_btn") }}</div>
+        <br><br>
+
+
+        <div class="button_container">
+            <div class="center">
+<!--                {{ form.submit(class="btn", type="submit") }}-->
+                <button class="btn" type="submit">
+                    <span class="btn_span">Оставить оценку</span>
+                </button>
+            </div>
+        </div>
+
 
         {% for cat, msg in get_flashed_messages(True) %}
             <div class="flash {{cat}}">{{msg}}</div>
