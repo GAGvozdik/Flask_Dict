@@ -2,27 +2,35 @@
  
 {% block content %}
 
-    <form method="POST" action="/dict">
-        <input class="search-input" placeholder="Введите название курса ..." name="search">
-        <br>
-        <div class="button_container">
-            <div class="center">
-                <button class="btn">
-                    <span style="font-size: 14px;" class="btn_span">Найти</span>
-                </button>
-            </div>
-        </div>
-    </form>
 
-    <a href="{{ url_for('dict')}}">
-        <div style="margin-top: 7px;" class="button_container">
-            <div class="center">
-                <button class="btn">
-                    <span style="font-size: 14px;" class="btn_span">Сбросить</span>
-                </button>
-            </div>
+<!--        <ul style="border: 2px solid var(&#45;&#45;my-light-blue); border-radius: 10px; padding: 20px; width: 400px; margin: 0px; box-sizing: border-box;">-->
+        <div class="filter-block">
+            <h3 style="margin-top: 0px; text-align: center;">Фильтры / Поиск</h3>
+            <form method="POST" action="/dict">
+                <input class="search-input" placeholder="Введите запрос ..." name="search">
+                <br>
+                <div class="button_container">
+                    <div class="center">
+                        <button class="btn">
+                            <span style="font-size: 14px;" class="btn_span">Найти</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <a href="{{ url_for('dict')}}">
+                <div style="margin-top: 7px;" class="button_container">
+                    <div class="center">
+                        <button class="btn">
+                            <span style="font-size: 14px;" class="btn_span">Сбросить</span>
+                        </button>
+                    </div>
+                </div>
+            </a>
         </div>
-    </a>
+    {% for cat, msg in get_flashed_messages(True) %}
+        <div class="flash {{cat}}">{{msg}}</div>
+    {% endfor %}
     <ul class="list-posts">
         {% for m in mfk_table %}
             <a style="" class="my_a" href="{{ url_for('showMfk', alias=m.id)}}">
@@ -50,10 +58,10 @@
                             {% endfor %}
                           </div>
                         </div>
-
-
-
+                    <input type="hidden" name="mfk_name" value="{{ m.mfkname }}" />
+                    <p style="color: black; margin-bottom:-15px;">Количество оценок: {{ m.score_numb }}<p>
                 </li>
+
             </a>
         {% endfor %}
     </ul>

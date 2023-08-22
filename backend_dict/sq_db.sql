@@ -17,7 +17,8 @@ faculty text,
 desc text,
 online text,
 openclose text,
-score text
+score text,
+score_numb integer
 );
 
 

@@ -52,7 +52,9 @@ class starsForm(FlaskForm):
     ])
     submit = SubmitField('Подтвердить')
 
+class ContactForm(FlaskForm):
+    text = StringField(u'Text', widget=TextArea())
+    submit = SubmitField("Войти")
 
 
-    # submit = SubmitField(flask.Markup('<span class="btn_span"></span>'))
 

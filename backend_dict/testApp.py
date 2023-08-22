@@ -9,7 +9,7 @@ from random import randint
 
 from FDataBase import FDataBase
 from UserLogin import UserLogin
-from forms import LoginForm, RegisterForm, starsForm, ValidateForm, recoveryForm, new_psw_form
+from forms import LoginForm, RegisterForm, starsForm, ValidateForm, recoveryForm, new_psw_form, ContactForm
 from test import add_mfk_to_db
 
 app = Flask(__name__)
@@ -29,7 +29,7 @@ mail = Mail(app)
 app.config["MAIL_SERVER"] = 'smtp.gmail.com'
 app.config["MAIL_PORT"] = 465
 app.config["MAIL_USERNAME"] = 'gvozdikgeorge@gmail.com'
-app.config['MAIL_PASSWORD']='ydnvhhhewdfewbvg'
+app.config['MAIL_PASSWORD'] = 'ydnvhhhewdfewbvg'
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 
@@ -103,16 +103,19 @@ def close_db(error):
 @app.route("/dict", methods=['GET', 'POST'])
 def dict():
     if request.method == 'POST':
-        return render_template('dict.html', my_text='МФК', menu=menu, mfk_table=dbase.getSearchMfk(request.form['search']))
-    return render_template('dict.html', my_text='МФК', menu=menu, mfk_table=dbase.getMfkAnonce())
+        mfk_table = dbase.getSearchMfk(request.form['search'])
+        if mfk_table == (False, False):
+            flash('МФК с таким описанием не найдено. Поменяйте формулировку', category='error')
+            return render_template('dict.html', my_text='МФК', menu=menu, mfk_table=dbase.getMfkAnonce())
+        else:
+            return render_template('dict.html', my_text='МФК', menu=menu, mfk_table=mfk_table)
 
-
-
+    return render_template('dict.html', my_text='МФК', menu=menu, mfk_table=dbase.getMfkAnonce(), dbase=dbase)
 
 
 @app.route("/about")
 def about():
-    return render_template('about.html', my_text='About', menu=menu)
+    return render_template('about.html', my_text='О нас', menu=menu)
 
 
 @app.route("/mfk/<alias>", methods=['GET', 'POST'])
@@ -139,6 +142,10 @@ def addComment(alias):
 
     form = starsForm()
     if form.validate_on_submit():
+
+        for i in dbase.getUserCommentsNumb(current_user.getName()):
+            for j in i:
+                print('gfdsgfsdg = ', j)
         comments_numb = len(dbase.getUserCommentsNumb(current_user.getName()))
 
         if comments_numb < max_commetns_numb:
@@ -170,12 +177,24 @@ def addComment(alias):
 
                     mfk_score = round(mfk_score / len_score_list)
                     dbase.updateMfkScore(alias, mfk_score)
+
+                    score_numb = dbase.getMfkScoreNumb(alias)
+                    for i in score_numb:
+                        for j in i:
+                            score_numb = j
+
+                    if score_numb == None:
+                        score_numb = 1
+                    else:
+                        score_numb += 1
+                    print('score_numb', score_numb)
+                    dbase.updateMfkScoreNumb(alias, score_numb)
+
             else:
                 flash('Вы уже оставляли оценку этому мфк', category='error')
         else:
             flash('Вы достигли лимита коментариев. Удалите комментарий, чтобы добавить новый', category='error')
-        return redirect(url_for('showMfk',alias=alias))
-
+        return redirect(url_for('showMfk', alias=alias))
 
     return render_template('comments.html', menu=menu, mfk=mfk, alias=alias, my_comments=dbase.getComment(alias),
                            form=form)
@@ -211,10 +230,10 @@ def register():
     if form.validate_on_submit():
         if dbase.getUsersE(form.email.data) == (False, False):
             if dbase.getUsersN(form.name.data) == (False, False):
-                msg = Message(subject='Verification code', sender='gvozdikgeorge@gmail.com',
+                msg = Message(subject='Verification code MFK Stars', sender='gvozdikgeorge@gmail.com',
                               recipients=[form.email.data])
                 otp = randint(000000, 999999)
-                msg.body = str(otp)
+                msg.body = 'MFK Stars. Код подтверждения: ' + str(otp)
                 mail.send(msg)
 
                 session['name'] = form.name.data
@@ -235,9 +254,10 @@ def password_recovery():
     if form.validate_on_submit():
         if dbase.getUsersE(form.email.data) != (False, False):
 
-            msg = Message(subject='Verification code', sender='gvozdikgeorge@gmail.com', recipients=[form.email.data])
+            msg = Message(subject='Verification code MFK Stars', sender='gvozdikgeorge@gmail.com',
+                          recipients=[form.email.data])
             otp = randint(000000, 999999)
-            msg.body = str(otp)
+            msg.body = 'MFK Stars. Код подтверждения: ' + str(otp)
             mail.send(msg)
 
             session['recovery_email'] = form.email.data
@@ -329,34 +349,44 @@ def logout():
 @app.route('/profile', methods=["POST", "GET"])
 @login_required
 def profile():
-
     if request.method == 'POST':
         if 'delete_comment_btn' in request.form:
             mfk_title = request.form.get('mfk_title')
             mfk_name = request.form.get('mfk_name')
+            if mfk_title != "Вы еще не ставили оценки":
+                dbase.delComment(mfk_title, current_user.getName())
 
 
-            dbase.delComment(mfk_title, current_user.getName())
 
-            comments_numb = len(dbase.getUserCommentsNumb(current_user.getName()))
+                comments_numb = len(dbase.getUserCommentsNumb(current_user.getName()))
+                dbase.updateUserCommentsNumb(comments_numb, current_user.getEmail())
 
-            dbase.updateUserCommentsNumb(comments_numb, current_user.getEmail())
-
-            score_list = dbase.getMfkScore(mfk_name)
-            mfk_score = 0
-            len_score_list = 0
-
-            for i in score_list:
-                for j in i:
-                    mfk_score += int(j)
-                    len_score_list += 1
-
-            if len_score_list == 0:
+                score_list = dbase.getMfkScore(mfk_name)
                 mfk_score = 0
-            else:
-                mfk_score = round(mfk_score / len_score_list)
+                len_score_list = 0
 
-            dbase.updateMfkScore(mfk_name, mfk_score)
+                for i in score_list:
+                    for j in i:
+                        mfk_score += int(j)
+                        len_score_list += 1
+
+                if len_score_list == 0:
+                    mfk_score = 0
+                else:
+                    mfk_score = round(mfk_score / len_score_list)
+
+                dbase.updateMfkScore(mfk_name, mfk_score)
+
+                score_numb = dbase.getMfkScoreNumb(mfk_name)
+                for i in score_numb:
+                    for j in i:
+                        score_numb = j
+
+                if (score_numb == None) or (score_numb == 0):
+                    score_numb = 0
+                else:
+                    score_numb -= 1
+                dbase.updateMfkScoreNumb(mfk_name, score_numb)
 
     your_comments = dbase.getUserCommentsNumb(current_user.getName())
     if your_comments == (False, False):
@@ -369,7 +399,6 @@ def profile():
         your_comments[0].mfkname = "Вы еще не ставили оценки"
         your_comments[0].mfktitle = "Вы еще не ставили оценки"
 
-
     return render_template('profile.html', menu=menu, your_comments=your_comments)
 
 
@@ -381,8 +410,23 @@ def load_user(user_id):
 @app.route("/contacts", methods=["POST", "GET"])
 @login_required
 def contacts():
+    form = ContactForm()
+    if form.validate_on_submit():
+        msg = Message(subject='Отзывы и пожелания', sender='gvozdikgeorge@gmail.com', recipients=['nagel20@yandex.ru'])
 
-    return render_template('contacts.html', my_text='Contacts', menu=menu)
+        m = ''
+        m += str(current_user.getName())
+        m += '<br>/n\\n'
+        m += str(current_user.getEmail())
+        m += '<br>/n\\n'
+        m = str(form.text.data)
+
+        msg.body = m
+
+        mail.send(msg)
+        flash("Cообщение отправлено", "success")
+        return redirect('contacts')
+    return render_template('contacts.html', my_text='Обратная связь', menu=menu, form=form)
 
 
 if __name__ == "__main__":

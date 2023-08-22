@@ -84,7 +84,7 @@ class FDataBase:
 
     def getMfkAnonce(self):
         try:
-            self.__cur.execute(f"SELECT id, name, faculty, desc, online, score FROM mfk ORDER BY id DESC")
+            self.__cur.execute(f"SELECT * FROM mfk ORDER BY id DESC")
             res = self.__cur.fetchall()
             if res: return res
         except sqlite3.Error as e:
@@ -174,7 +174,7 @@ class FDataBase:
 
     def getSearchMfk(self, a):
         try:
-            self.__cur.execute(f"SELECT * FROM mfk WHERE name LIKE '{('%' + a + '%')}' OR faculty LIKE '{('%' + a + '%')}' OR desc LIKE '{('%' + a + '%')}' LIMIT 20")
+            self.__cur.execute(f"SELECT * FROM mfk WHERE name LIKE '{('%' + a + '%')}' OR faculty LIKE '{('%' + a + '%')}' OR desc LIKE '{('%' + a + '%')}'")
 
             res = self.__cur.fetchall()
             if res:
@@ -195,6 +195,24 @@ class FDataBase:
         return True
 
 
+    def updateMfkScoreNumb(self, mfk_id, score_numb):
+        try:
+            self.__cur.execute(f"UPDATE mfk SET score_numb = ? WHERE id = ?", (score_numb, mfk_id))
+            self.__db.commit()
+        except sqlite3.Error as e:
+            print("Ошибка обновления оценок мфк в БД: " + str(e))
+            return False
+        return True
+
+    def getMfkScoreNumb(self, mfk_id):
+        try:
+            self.__cur.execute(f"SELECT score_numb FROM mfk WHERE id LIKE {mfk_id}")
+            res = self.__cur.fetchall()
+            if res:
+                return res
+        except sqlite3.Error as e:
+            print("Ошибка получения статьи из БД " + str(e))
+        return ()
 
 
 

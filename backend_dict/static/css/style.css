@@ -172,8 +172,15 @@ body {
 }
 
 /* ------------------------------------------------------------------- */
-/* common styles */
+/* filters */
 /* ------------------------------------------------------------------- */
+.filter-block{
+    width: 450px;
+    border: 2px solid var(--my-light-blue);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 0px;
+}
 
 .search-input{
     height: 30px;
@@ -207,6 +214,35 @@ body {
 ::-ms-input-placeholder { /* Microsoft Edge */
   color: var(--my-light-grey);
 }
+
+@media screen and (max-width: 550px) {
+
+    .filter-block{
+        width: auto;
+        display: block;
+    }
+
+    .search-input{
+        width: auto;
+        display: block;
+    }
+
+    .button_container{
+        width: auto;
+        display: block;
+    }
+
+    .btn{
+        width: auto;
+        display: block;
+    }
+
+}
+
+
+/* ------------------------------------------------------------------- */
+/* common styles */
+/* ------------------------------------------------------------------- */
 
 .content {
   margin: 80px 20px 20px 35px;
