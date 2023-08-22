@@ -9,6 +9,7 @@
 <h1 style="margin-bottom: 14px;">Ваш профиль</h1>
 <div style="margin-bottom: 10px; font-size: 18px;">Имя: {{ current_user.getName() }}</div>
 <div style="margin-bottom: 10px; font-size: 18px;">Email: {{ current_user.getEmail() }}</div>
+<div style="margin-bottom: 10px; font-size: 18px;">Количество оценок: {{ comments_numb }}</div>
 
 
 <a class="my_a" href="{{url_for('logout')}}">

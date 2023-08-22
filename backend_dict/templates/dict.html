@@ -59,7 +59,14 @@
                           </div>
                         </div>
                     <input type="hidden" name="mfk_name" value="{{ m.mfkname }}" />
-                    <p style="color: black; margin-bottom:-15px;">Количество оценок: {{ m.score_numb }}<p>
+                    <p style="color: black; margin-bottom:-15px;">
+                        {% if m.score_numb == None %}
+                            Количество оценок: 0
+                        {% else %}
+                            Количество оценок: {{ m.score_numb }}
+                        {% endif %}
+
+                    <p>
                 </li>
 
             </a>

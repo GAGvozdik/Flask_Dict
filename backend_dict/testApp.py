@@ -143,9 +143,6 @@ def addComment(alias):
     form = starsForm()
     if form.validate_on_submit():
 
-        for i in dbase.getUserCommentsNumb(current_user.getName()):
-            for j in i:
-                print('gfdsgfsdg = ', j)
         comments_numb = len(dbase.getUserCommentsNumb(current_user.getName()))
 
         if comments_numb < max_commetns_numb:
@@ -164,6 +161,10 @@ def addComment(alias):
                 else:
                     flash('Оценка добавлена успешно', category='success')
 
+                    if dbase.getUserCommentsNumb(current_user.getName()) != (False, False):
+                        comments_numb = len(dbase.getUserCommentsNumb(current_user.getName()))
+                    else:
+                        comments_numb = 0
                     dbase.updateUserCommentsNumb(comments_numb, current_user.getEmail())
 
                     # ----------------------------------------------
@@ -356,9 +357,20 @@ def profile():
             if mfk_title != "Вы еще не ставили оценки":
                 dbase.delComment(mfk_title, current_user.getName())
 
+                print('----------------------')
+                if dbase.getUserCommentsNumb(current_user.getName()) != (False, False):
+                    # for i in dbase.getUserCommentsNumb(current_user.getName()):
+                    #     for j in i:
+                    #         print('add comment = ', j)
+                    print('profile = ', len(dbase.getUserCommentsNumb(current_user.getName())))
+                else:
+                    print('profile = (False, False)')
+                print('----------------------')
 
-
-                comments_numb = len(dbase.getUserCommentsNumb(current_user.getName()))
+                if dbase.getUserCommentsNumb(current_user.getName()) != (False, False):
+                    comments_numb = len(dbase.getUserCommentsNumb(current_user.getName()))
+                else:
+                    comments_numb = 0
                 dbase.updateUserCommentsNumb(comments_numb, current_user.getEmail())
 
                 score_list = dbase.getMfkScore(mfk_name)
@@ -399,7 +411,7 @@ def profile():
         your_comments[0].mfkname = "Вы еще не ставили оценки"
         your_comments[0].mfktitle = "Вы еще не ставили оценки"
 
-    return render_template('profile.html', menu=menu, your_comments=your_comments)
+    return render_template('profile.html', menu=menu, your_comments=your_comments, comments_numb=dbase.getUserCommentsNumb(current_user.getName()))
 
 
 @login_manager.user_loader
