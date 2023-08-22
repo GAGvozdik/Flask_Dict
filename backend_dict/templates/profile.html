@@ -47,18 +47,27 @@
                 <p class="annonce">{{ m.text }}</p>
             </li>
 
-        <form method="POST" action="/profile">
-              <div class="button_container">
-                <div class="center">
-                  <button class="btn">
-                    <span style="font-size: 14px;" class="btn_span">Удалить комментарий</span>
-                  </button>
-                </div>
-              </div>
-        </form>
+            <form method="POST" action="/profile">
+                <input type="hidden" name="mfk_title" value="{{ m.mfktitle }}" />
+                <input type="hidden" name="mfk_name" value="{{ m.mfkname }}" />
+                  <div class="button_container">
+                    <div class="center">
+                      <button class="btn" name="delete_comment_btn">
+                        <span style="font-size: 14px;" class="btn_span">Удалить комментарий</span>
+                      </button>
+                    </div>
+                  </div>
+            </form>
 
         {% endfor %}
     </ul>
 
 
 {% endblock %}
+
+
+
+
+
+
+

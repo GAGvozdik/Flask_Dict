@@ -29,7 +29,7 @@ mail = Mail(app)
 app.config["MAIL_SERVER"] = 'smtp.gmail.com'
 app.config["MAIL_PORT"] = 465
 app.config["MAIL_USERNAME"] = 'gvozdikgeorge@gmail.com'
-app.config['MAIL_PASSWORD']='htrh653653ujndhjgdjjh545#@$ththtf'
+app.config['MAIL_PASSWORD']='ydnvhhhewdfewbvg'
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 
@@ -330,6 +330,34 @@ def logout():
 @login_required
 def profile():
 
+    if request.method == 'POST':
+        if 'delete_comment_btn' in request.form:
+            mfk_title = request.form.get('mfk_title')
+            mfk_name = request.form.get('mfk_name')
+
+
+            dbase.delComment(mfk_title, current_user.getName())
+
+            comments_numb = len(dbase.getUserCommentsNumb(current_user.getName()))
+
+            dbase.updateUserCommentsNumb(comments_numb, current_user.getEmail())
+
+            score_list = dbase.getMfkScore(mfk_name)
+            mfk_score = 0
+            len_score_list = 0
+
+            for i in score_list:
+                for j in i:
+                    mfk_score += int(j)
+                    len_score_list += 1
+
+            if len_score_list == 0:
+                mfk_score = 0
+            else:
+                mfk_score = round(mfk_score / len_score_list)
+
+            dbase.updateMfkScore(mfk_name, mfk_score)
+
     your_comments = dbase.getUserCommentsNumb(current_user.getName())
     if your_comments == (False, False):
         class Person:
@@ -341,28 +369,6 @@ def profile():
         your_comments[0].mfkname = "Вы еще не ставили оценки"
         your_comments[0].mfktitle = "Вы еще не ставили оценки"
 
-    if request.method == 'POST':
-        # your_comments[i].mfktitle
-        alias = 4
-        mfk_title=''
-
-        dbase.delComment(mfk_title, current_user.getName())
-
-        comments_numb = len(dbase.getUserCommentsNumb(current_user.getName()))
-
-        dbase.updateUserCommentsNumb(comments_numb, current_user.getEmail())
-
-
-        score_list = dbase.getMfkScore(alias)
-        mfk_score = 0
-        len_score_list = 0
-        for i in score_list:
-            for j in i:
-                mfk_score += int(j)
-                len_score_list += 1
-
-        # mfk_score = round(mfk_score / len_score_list)
-        # dbase.updateMfkScore(alias, mfk_score)
 
     return render_template('profile.html', menu=menu, your_comments=your_comments)
 
