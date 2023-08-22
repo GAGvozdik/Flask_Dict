@@ -42,25 +42,27 @@
 
     <form action="" method="post" class="form-contact">
         {{ form.hidden_tag() }}
-        {{ form.text(rows=7, cols=40) }}
-        <br>
-        <div class="container_under_comment container">
-          <div class="container__items">
-            {% for subfield in form.score %}
-              {{ subfield() }}
-              <label style="margin-bottom: 0px;" class="my_label_under_comment my_label" for="{{ subfield.id }}">
-                <div class="star-stroke">
-                  <div class="star-fill"></div>
+
+
+        <ul class="list-comments">
+            <li style="height: 20px; ">
+                <div class="container_under_comment container">
+                  <div class="container__items">
+                    {% for subfield in form.score %}
+                      {{ subfield() }}
+                      <label style="margin-bottom: 0px;" class="my_label_under_comment my_label" for="{{ subfield.id }}">
+                        <div class="star-stroke">
+                          <div class="star-fill"></div>
+                        </div>
+                        <!--<div class="label-description" data-content="{{ subfield.data }}">{{ subfield.data }}</div>-->
+                      </label>
+                    {% endfor %}
+                  </div>
                 </div>
-                <!--<div class="label-description" data-content="{{ subfield.data }}">{{ subfield.data }}</div>-->
-              </label>
-            {% endfor %}
-          </div>
-        </div>
+            </li>
+        </ul>
 
 
-
-        <br><br>
 
 
         <div class="button_container">

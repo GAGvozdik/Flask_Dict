@@ -5,39 +5,11 @@
 {% for cat, msg in get_flashed_messages(True) %}
 <div class="flash {{cat}}">{{msg}}</div>
 {% endfor %}
-<table border="0" class="profile-table">
-         <tr>
-             <td valign="top">
-                   <div class="profile-ava"><img src="{{ url_for('userava') }}"></div>
-                   <div class="profile-load">
-                   <form action="{{url_for('upload')}}" method="POST" enctype="multipart/form-data">
 
-                        <input class="my_btn" type="submit" value="Загрузить">
+<h1 style="margin-bottom: 14px;">Ваш профиль</h1>
+<div style="margin-bottom: 10px; font-size: 18px;">Имя: {{ current_user.getName() }}</div>
+<div style="margin-bottom: 10px; font-size: 18px;">Email: {{ current_user.getEmail() }}</div>
 
-                        <div style="margin: 15px 0px 10px 0px;">
-
-                            <label class="choose_file_label">
-                                <input style="display:none" type="file">
-                                Выбрать&nbsp;файл
-                                </input>
-                            </label>
-                        </div>
-
-
-                   </form>
-                   </div>
-            </td>
-
-
-
-            <td valign="top" class="profile-panel">
-                   <ul class="profile-info">
-                   <li>Имя: {{ current_user.getName() }}</li>
-                   <li>Email: {{ current_user.getEmail() }}</li>
-                   </ul>
-            </td>
-         </tr>
-</table>
 
 <a class="my_a" href="{{url_for('logout')}}">
   <div class="button_container">
@@ -54,7 +26,7 @@
     <h2>Ваши оценки</h2>
     <ul class="list-comments">
         {% for m in your_comments %}
-            <li>
+            <li style="width: 300px;" >
                 <p style="margin: 0px 0 0px 0;" class="title">
 
                     {{m.mfktitle}}
@@ -74,7 +46,17 @@
 
                 <p class="annonce">{{ m.text }}</p>
             </li>
-            <!--<button class="my_btn">Удалить комментарий</button>-->
+
+        <form method="POST" action="/profile">
+              <div class="button_container">
+                <div class="center">
+                  <button class="btn">
+                    <span style="font-size: 14px;" class="btn_span">Удалить комментарий</span>
+                  </button>
+                </div>
+              </div>
+        </form>
+
         {% endfor %}
     </ul>
 

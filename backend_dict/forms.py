@@ -28,15 +28,6 @@ class ValidateForm(FlaskForm):
     email_code = StringField("Введите код подтверждения: ")
     submit = SubmitField("Подтвердить")
 
-# submit_value = flask.Markup('''
-#     <div class="button_container">
-#         <div class="center">
-#             <button class="btn" type="submit">
-#                 <span class="btn_span">Оставить оценку</span>
-#             </button>
-#         </div>
-#     </div>''')
-
 class recoveryForm(FlaskForm):
     email = StringField("Email: ", validators=[Email("Некорректный email")])
     submit = SubmitField("Подтвердить")
@@ -51,7 +42,7 @@ class new_psw_form(FlaskForm):
 
 
 class starsForm(FlaskForm):
-    text = StringField(u'Text', widget=TextArea())
+    # text = StringField(u'Text', widget=TextArea())
     score = RadioField('Stars', validators=[InputRequired()], choices=[
         ('st5', 'Excellent'),
         ('st4', 'Good'),

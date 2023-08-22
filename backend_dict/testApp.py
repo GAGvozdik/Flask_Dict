@@ -4,38 +4,36 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 import sqlite3
 import os
 import numpy as np
-from flask_mail import Mail,Message
+from flask_mail import Mail, Message
 from random import randint
 
 from FDataBase import FDataBase
 from UserLogin import UserLogin
 from forms import LoginForm, RegisterForm, starsForm, ValidateForm, recoveryForm, new_psw_form
 from test import add_mfk_to_db
+
 app = Flask(__name__)
 
-# конфигурация
+# config
 DATABASE = '/tmp/flsite.db'
 DEBUG = True
-SECRET_KEY = 'fdgfh78@#5?>gfhf89dx,v06k'
+SECRET_KEY = 'fdgfh78@#5?>gfhthrhew554f89dx,v06k'
 USERNAME = 'admin'
-PASSWORD = '123'
+PASSWORD = 'grewgrth4h54h5h'
 MAX_CONTENT_LENGTH = 1024 * 1024
 
 # mail config
 
-mail=Mail(app)
+mail = Mail(app)
 
-app.config["MAIL_SERVER"]='smtp.gmail.com'
-app.config["MAIL_PORT"]=465
-app.config["MAIL_USERNAME"]='gvozdikgeorge@gmail.com'
-app.config['MAIL_PASSWORD']='ydnvhhhewdfewbvg'
-app.config['MAIL_USE_TLS']=False
-app.config['MAIL_USE_SSL']=True
+app.config["MAIL_SERVER"] = 'smtp.gmail.com'
+app.config["MAIL_PORT"] = 465
+app.config["MAIL_USERNAME"] = 'gvozdikgeorge@gmail.com'
+app.config['MAIL_PASSWORD']='htrh653653ujndhjgdjjh545#@$ththtf'
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
 
-mail=Mail(app)
-
-
-
+mail = Mail(app)
 
 app.config.from_object(__name__)
 app.config.update(dict(DATABASE=os.path.join(app.root_path, 'flsite.db')))
@@ -53,6 +51,7 @@ menu = [
     {"title": "О нас", "url": "/about"}]
 
 max_commetns_numb = 7
+
 
 def connect_db():
     conn = sqlite3.connect(app.config['DATABASE'])
@@ -96,10 +95,19 @@ def close_db(error):
         g.link_db.close()
 
 
+##############################################################################
+# Main pages
+##############################################################################
+
 @app.route("/")
-@app.route("/dict")
+@app.route("/dict", methods=['GET', 'POST'])
 def dict():
+    if request.method == 'POST':
+        return render_template('dict.html', my_text='МФК', menu=menu, mfk_table=dbase.getSearchMfk(request.form['search']))
     return render_template('dict.html', my_text='МФК', menu=menu, mfk_table=dbase.getMfkAnonce())
+
+
+
 
 
 @app.route("/about")
@@ -107,35 +115,24 @@ def about():
     return render_template('about.html', my_text='About', menu=menu)
 
 
-
-
-
 @app.route("/mfk/<alias>", methods=['GET', 'POST'])
 def showMfk(alias):
     mfk = dbase.getMfk(alias)
     if not mfk:
         abort(404)
-        abort(404)
 
-    my_comments = dbase.getComment(alias)
-    for my in my_comments:
-        print("comments = ", my)
-    print("altype = ", type(alias))
-    print("comments = ", mfk)
-    stars_numb = 3
-    return render_template('mfk.html', menu=menu, mfk=mfk, alias=alias, my_comments=dbase.getComment(alias), stars_numb=stars_numb)
+    return render_template('mfk.html', menu=menu, mfk=mfk, alias=alias, my_comments=dbase.getComment(alias))
+
 
 @app.route("/question", methods=['GET', 'POST'])
 @login_required
 def question():
-
     return render_template('question.html', menu=menu)
 
 
 @app.route("/addComment/<alias>", methods=['GET', 'POST'])
 @login_required
 def addComment(alias):
-
     mfk = dbase.getMfk(alias)
     if not mfk:
         abort(404)
@@ -143,8 +140,7 @@ def addComment(alias):
     form = starsForm()
     if form.validate_on_submit():
         comments_numb = len(dbase.getUserCommentsNumb(current_user.getName()))
-        print('comments_numb')
-        print(comments_numb)
+
         if comments_numb < max_commetns_numb:
 
             is_comment_already_added = 0
@@ -153,10 +149,9 @@ def addComment(alias):
                     for j in i:
                         if j == mfk[0]:
                             is_comment_already_added = 1
-                        print('j, mfk[0] = ', j, mfk[0])
 
             if is_comment_already_added == 0:
-                res = dbase.addComment(current_user.getName(), form.text.data, str(alias), form.score.data[-1], mfk[0])
+                res = dbase.addComment(current_user.getName(), str(alias), form.score.data[-1], mfk[0])
                 if not res:
                     flash('Ошибка. Оценка не добавлена, попробуйте перезагрузить страницу', category='error')
                 else:
@@ -170,25 +165,20 @@ def addComment(alias):
                     len_score_list = 0
                     for i in score_list:
                         for j in i:
-                            print('j = ', j)
                             mfk_score += int(j)
                             len_score_list += 1
 
-                    mfk_score = round(mfk_score /len_score_list)
-                    print('mfk_score, len_score_list = ', mfk_score, len_score_list)
+                    mfk_score = round(mfk_score / len_score_list)
                     dbase.updateMfkScore(alias, mfk_score)
-
-                    print(comments_numb)
             else:
                 flash('Вы уже оставляли оценку этому мфк', category='error')
         else:
             flash('Вы достигли лимита коментариев. Удалите комментарий, чтобы добавить новый', category='error')
+        return redirect(url_for('showMfk',alias=alias))
 
-            # return redirect(url_for("showMfk(alias)"))
-    form = starsForm()
 
-    return render_template('comments.html', menu=menu, mfk=mfk, alias=alias, my_comments=dbase.getComment(alias), form=form)
-
+    return render_template('comments.html', menu=menu, mfk=mfk, alias=alias, my_comments=dbase.getComment(alias),
+                           form=form)
 
 
 @app.errorhandler(404)
@@ -221,7 +211,8 @@ def register():
     if form.validate_on_submit():
         if dbase.getUsersE(form.email.data) == (False, False):
             if dbase.getUsersN(form.name.data) == (False, False):
-                msg = Message(subject='Verification code', sender='gvozdikgeorge@gmail.com', recipients=[form.email.data])
+                msg = Message(subject='Verification code', sender='gvozdikgeorge@gmail.com',
+                              recipients=[form.email.data])
                 otp = randint(000000, 999999)
                 msg.body = str(otp)
                 mail.send(msg)
@@ -282,10 +273,10 @@ def verify():
             else:
                 flash("Ошибка при добавлении в БД", "error")
         else:
-            print(4)
             flash("Неверный код подтверждения", "error")
 
     return render_template('verify.html', form_code=form_code, my_mail=my_mail)
+
 
 @app.route('/verify_recovery', methods=["POST", "GET"])
 def verify_recovery():
@@ -304,10 +295,10 @@ def verify_recovery():
             flash("Email подтвержден", "success")
             return redirect(url_for('new_psw'))
         else:
-            print(4)
             flash("Неверный код подтверждения", "error")
 
     return render_template('verify_recovery.html', form=form, my_mail=my_mail)
+
 
 @app.route('/new_psw', methods=["POST", "GET"])
 def new_psw():
@@ -317,14 +308,15 @@ def new_psw():
 
     if form.validate_on_submit():
 
-            hash = generate_password_hash(form.psw.data)
-            res = dbase.updatePsw(email, hash)
-            if res:
-                flash("Пароль успешно изменен", "success")
-                return redirect(url_for('login'))
-            else:
-                flash("Ошибка при добавлении в БД", "error")
+        hash = generate_password_hash(form.psw.data)
+        res = dbase.updatePsw(email, hash)
+        if res:
+            flash("Пароль успешно изменен", "success")
+            return redirect(url_for('login'))
+        else:
+            flash("Ошибка при добавлении в БД", "error")
     return render_template('new_psw.html', form=form)
+
 
 @app.route('/logout')
 @login_required
@@ -334,11 +326,9 @@ def logout():
     return redirect(url_for('login'))
 
 
-@app.route('/profile')
+@app.route('/profile', methods=["POST", "GET"])
 @login_required
 def profile():
-    for i in dbase.getUserCommentsNumb(current_user.getName()):
-        print("i.score = ", i)
 
     your_comments = dbase.getUserCommentsNumb(current_user.getName())
     if your_comments == (False, False):
@@ -351,60 +341,43 @@ def profile():
         your_comments[0].mfkname = "Вы еще не ставили оценки"
         your_comments[0].mfktitle = "Вы еще не ставили оценки"
 
-    return render_template('profile.html', my_text="Your Profile", menu=menu, your_comments=your_comments)
+    if request.method == 'POST':
+        # your_comments[i].mfktitle
+        alias = 4
+        mfk_title=''
+
+        dbase.delComment(mfk_title, current_user.getName())
+
+        comments_numb = len(dbase.getUserCommentsNumb(current_user.getName()))
+
+        dbase.updateUserCommentsNumb(comments_numb, current_user.getEmail())
+
+
+        score_list = dbase.getMfkScore(alias)
+        mfk_score = 0
+        len_score_list = 0
+        for i in score_list:
+            for j in i:
+                mfk_score += int(j)
+                len_score_list += 1
+
+        # mfk_score = round(mfk_score / len_score_list)
+        # dbase.updateMfkScore(alias, mfk_score)
+
+    return render_template('profile.html', menu=menu, your_comments=your_comments)
 
 
 @login_manager.user_loader
 def load_user(user_id):
-    print("load_user")
     return UserLogin().fromDB(user_id, dbase)
-
-
-@app.route('/userava')
-@login_required
-def userava():
-    img = current_user.getAvatar(app)
-    if not img:
-        return ""
-
-    h = make_response(img)
-    h.headers['Content-Type'] = 'image/png'
-    return h
-
-
-@app.route('/upload', methods=["POST", "GET"])
-@login_required
-def upload():
-    if request.method == 'POST':
-        file = request.files['file']
-        if file and current_user.verifyExt(file.filename):
-            try:
-                img = file.read()
-                res = dbase.updateUserAvatar(img, current_user.get_id())
-                if not res:
-                    flash("Ошибка обновления аватара", "error")
-                    return redirect(url_for('profile'))
-                flash("Аватар обновлен", "success")
-            except FileNotFoundError as e:
-                flash("Ошибка чтения файла", "error")
-        else:
-            flash("Ошибка обновления аватара", "error")
-
-    return redirect(url_for('profile'))
 
 
 @app.route("/contacts", methods=["POST", "GET"])
 @login_required
 def contacts():
-    # if request.method == 'POST':
-    #     print(request.form)
-    #
-    #     if len(request.form['username']) > 2:
-    #         flash('Сообщение отправлено', category='success')
-    #     else:
-    #         flash('Ошибка отправки', category='error')
 
     return render_template('contacts.html', my_text='Contacts', menu=menu)
+
 
 if __name__ == "__main__":
     app.run(debug=True)

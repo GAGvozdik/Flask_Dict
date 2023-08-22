@@ -2,20 +2,20 @@
 
 {% block content %}
 
-    <p class="title">
+
 
         <h1>{{ mfk.name }}</h1>
         <b>Факультет: {{ mfk.faculty }}</b>
         <br>{{ mfk.desc }}
 
-    </p>
+
 
     {% for cat, msg in get_flashed_messages(True) %}
         <div class="flash {{cat}}">{{ msg }}</div>
     {% endfor %}
 
 
-    <h2>Комментарии</h2>
+    <h2 style="margin-top: 10px; margin-bottom: 10px; ">Комментарии</h2>
     <ul class="list-comments">
         {% for m in my_comments %}
             <li>
@@ -40,7 +40,7 @@
             </li>
         {% endfor %}
     </ul>
-<br>
+
     <a class="my_a" href="{{ url_for('addComment', alias=alias)}}">
 
           <div class="button_container">

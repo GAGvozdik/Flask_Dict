@@ -2,6 +2,27 @@
  
 {% block content %}
 
+    <form method="POST" action="/dict">
+        <input class="search-input" placeholder="Введите название курса ..." name="search">
+        <br>
+        <div class="button_container">
+            <div class="center">
+                <button class="btn">
+                    <span style="font-size: 14px;" class="btn_span">Найти</span>
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <a href="{{ url_for('dict')}}">
+        <div style="margin-top: 7px;" class="button_container">
+            <div class="center">
+                <button class="btn">
+                    <span style="font-size: 14px;" class="btn_span">Сбросить</span>
+                </button>
+            </div>
+        </div>
+    </a>
     <ul class="list-posts">
         {% for m in mfk_table %}
             <a style="" class="my_a" href="{{ url_for('showMfk', alias=m.id)}}">
@@ -14,7 +35,7 @@
 
                         <div class="my_desc">{{m.desc[:350]}} ...</div>
 
-                        <div style="color: var(--my-grey); border: 2px solid var(--my-light-grey); border-radius: 7px; padding: 5px; margin: 10px 5px 0px 0px; display: inline-block;">
+                        <div style="color: var(--my-light-grey); border: 2px solid var(--my-2light-blue); border-radius: 7px; padding: 5px; margin: 10px 5px 0px 0px; display: inline-block;">
                             <b>{{m.faculty}}</b>
                         </div>
 
