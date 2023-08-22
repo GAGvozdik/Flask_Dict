@@ -411,7 +411,13 @@ def profile():
         your_comments[0].mfkname = "Вы еще не ставили оценки"
         your_comments[0].mfktitle = "Вы еще не ставили оценки"
 
-    return render_template('profile.html', menu=menu, your_comments=your_comments, comments_numb=dbase.getUserCommentsNumb(current_user.getName()))
+    if dbase.getUserCommentsNumb(current_user.getName()) != (False, False):
+        comments_numb = len(dbase.getUserCommentsNumb(current_user.getName()))
+    else:
+        comments_numb = 0
+    dbase.updateUserCommentsNumb(comments_numb, current_user.getEmail())
+
+    return render_template('profile.html', menu=menu, your_comments=your_comments, comments_numb=comments_numb)
 
 
 @login_manager.user_loader
