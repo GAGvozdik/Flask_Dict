@@ -11,17 +11,18 @@ from FDataBase import FDataBase
 from UserLogin import UserLogin
 from forms import LoginForm, RegisterForm, starsForm, ValidateForm, recoveryForm, new_psw_form, ContactForm
 from test import add_mfk_to_db
+from flask_wtf.csrf import CSRFProtect
 
 app = Flask(__name__)
 
 # config
 DATABASE = '/tmp/flsite.db'
 DEBUG = True
-SECRET_KEY = 'fdgfh78@#5?>gfhthrhew554f89dx,v06k'
+
 USERNAME = 'admin'
 PASSWORD = 'grewgrth4h54h5h'
-MAX_CONTENT_LENGTH = 1024 * 1024
 
+csrf = CSRFProtect(app)
 # mail config
 
 mail = Mail(app)
@@ -32,6 +33,9 @@ app.config["MAIL_USERNAME"] = 'gvozdikgeorge@gmail.com'
 app.config['MAIL_PASSWORD'] = 'ydnvhhhewdfewbvg'
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
+app.config['SECRET_KEY'] = 'fdgfh78@#5?>gfhthrhew554f89dx,v06k'
+app.config['RECAPTCHA_PUBLIC_KEY'] = "6LcfMc0nAAAAABeRbVxX7mwr3XRmdyuac-vfdeWs"
+app.config['RECAPTCHA_PRIVATE_KEY'] = "6LcfMc0nAAAAADiDZ_tp45O1MPE8jXcfZk3D5Snn"
 
 mail = Mail(app)
 
@@ -155,7 +159,7 @@ def addComment(alias):
                             is_comment_already_added = 1
 
             if is_comment_already_added == 0:
-                res = dbase.addComment(current_user.getName(), str(alias), form.score.data[-1], mfk[0])
+                res = dbase.addComment(current_user.getName(), str(alias), form.score.data[-1], mfk[0], form.reason.data)
                 if not res:
                     flash('Ошибка. Оценка не добавлена, попробуйте перезагрузить страницу', category='error')
                 else:
@@ -236,7 +240,7 @@ def register():
                 otp = randint(000000, 999999)
                 msg.body = 'MFK Stars. Код подтверждения: ' + str(otp)
                 mail.send(msg)
-
+                print(otp)
                 session['name'] = form.name.data
                 session['email'] = form.email.data
                 session['password'] = form.psw.data

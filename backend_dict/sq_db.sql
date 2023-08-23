@@ -27,19 +27,6 @@ id integer PRIMARY KEY AUTOINCREMENT,
 username text,
 mfkname text,
 score text,
-mfktitle text
+mfktitle text,
+reason text
 );
-
---name text,
---faculty text,
---online text,
---openclose text,
---discribe text,
---teachers text,
---whereis text,
---whenis text,
---complexity text,
---semester text,
---record text,
---score text,
---url text,

@@ -172,8 +172,48 @@ body {
 }
 
 /* ------------------------------------------------------------------- */
+/* select */
+/* ------------------------------------------------------------------- */
+
+.select-css {
+
+    font-size: 16px;
+    font-family: sans-serif;
+    font-weight: 700;
+    color: #444;
+
+    padding: .6em 1.4em .5em .8em; width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin: 10px;
+    margin-left: 0px;
+    border: 1px solid #aaa;
+    box-shadow: 0 1px 0 1px rgba(0,0,0,.04);
+    border-radius: .5em;
+
+    background-color: #fff;
+
+    width: 225px;
+    outline:none;
+}
+ .select-css::-ms-expand { display: none; }
+ .select-css:hover { border-color: #888; }
+ .select-css:focus { border-color: #aaa;
+ box-shadow: 0 0 1px 3px rgba(59, 153, 252, .7);
+ box-shadow: 0 0 0 3px -moz-mac-focusring;
+color: #222;
+ outline: none;
+}
+ .select-css option { font-weight:normal; }
+ *[dir="rtl"] .select-css, :root:lang(ar) .select-css, :root:lang(iw) .select-css {
+background-position: left .7em top 50%, 0 0;
+padding: .6em .8em .5em 1.4em;
+}
+
+/* ------------------------------------------------------------------- */
 /* filters */
 /* ------------------------------------------------------------------- */
+
 .filter-block{
     width: 450px;
     border: 2px solid var(--my-light-blue);
@@ -183,6 +223,7 @@ body {
 }
 
 .search-input{
+    max-width: 100%;
     height: 30px;
     width: 205px;
     margin-bottom: 7px;
@@ -190,11 +231,16 @@ body {
     border: 2px solid var(--my-light-blue);
     border-radius: 5px;
     font-color: red;
-    padding: 3px 5px 3px 30px;
+    padding: 3px 5px 3px 15px;
     font-size: 14px;
     transition: 0.4s ease-in-out;
     outline:none;
     background: var(--my-white);
+
+            box-sizing: border-box;
+        display: block;
+        max-width: 100%;
+        margin-right: 70px;
 }
 
 .search-input:hover{
@@ -223,19 +269,39 @@ body {
     }
 
     .search-input{
-        width: auto;
+        box-sizing: border-box;
         display: block;
+        max-width: 100%;
+        margin-right: 70px;
     }
 
     .button_container{
-        width: auto;
         display: block;
+        max-width: 100%;
+        margin-right: 70px;
     }
 
     .btn{
-        width: auto;
         display: block;
+        max-width: 100%;
+        box-sizing: border-box;
     }
+    .button_container {
+        display: block;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .center{
+        display: block;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .btn_span {
+        font-size: 11px;
+    }
+
     .my_logo{
         display: none;
     }
@@ -351,9 +417,8 @@ hr {
 
 .btn_span {
   color: var(--my-background);
-  font-size: 18px;
   font-weight: 100;
-  font-size: 16px;
+  font-size: 13px;
 }
 
 .btn:hover > .btn_span {

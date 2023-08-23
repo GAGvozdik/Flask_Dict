@@ -20,7 +20,7 @@ class FDataBase:
             self.__cur.execute("INSERT INTO users VALUES(NULL, ?, ?, ?, NULL, ?, ?)", (name, email, hpsw, 0, tm))
             self.__db.commit()
         except sqlite3.Error as e:
-            print("Ошибка добавления пользователя в БД " + str(e))
+            print("addUser Ошибка добавления пользователя в БД " + str(e))
             return False
 
         return True
@@ -30,12 +30,12 @@ class FDataBase:
             self.__cur.execute(f"SELECT * FROM users WHERE id = {user_id} LIMIT 1")
             res = self.__cur.fetchone()
             if not res:
-                print("Пользователь не найден")
+                print("getUser Пользователь не найден")
                 return False
 
             return res
         except sqlite3.Error as e:
-            print("Ошибка получения данных из БД " + str(e))
+            print("getUser Ошибка получения данных из БД " + str(e))
 
         return False
 
@@ -44,11 +44,11 @@ class FDataBase:
             self.__cur.execute(f"SELECT * FROM users WHERE email = '{email}' LIMIT 1")
             res = self.__cur.fetchone()
             if not res:
-                print("Пользователь не найден")
+                print("getUserByEmail Пользователь не найден")
                 return False
             return res
         except sqlite3.Error as e:
-            print("Ошибка получения данных из БД " + str(e))
+            print("getUserByEmail Ошибка получения данных из БД " + str(e))
         return False
 
     def updateUserCommentsNumb(self, comments_numb, email):
@@ -56,7 +56,7 @@ class FDataBase:
             self.__cur.execute(f"UPDATE users SET comments_numb = ? WHERE email = ?", (comments_numb, email))
             self.__db.commit()
         except sqlite3.Error as e:
-            print("Ошибка обновления аватара в БД: " + str(e))
+            print("updateUserCommentsNumb Ошибка обновления аватара в БД: " + str(e))
             return False
         return True
 
@@ -67,7 +67,7 @@ class FDataBase:
             if res:
                 return res
         except sqlite3.Error as e:
-            print("Ошибка получения статьи из БД " + str(e))
+            print("getUserCommentsNumb Ошибка получения статьи из БД " + str(e))
 
         return (False, False)
 
@@ -78,7 +78,7 @@ class FDataBase:
             if res:
                 return res
         except sqlite3.Error as e:
-            print("Ошибка получения статьи из БД " + str(e))
+            print("getMfk Ошибка получения статьи из БД " + str(e))
 
         return (False, False)
 
@@ -88,46 +88,44 @@ class FDataBase:
             res = self.__cur.fetchall()
             if res: return res
         except sqlite3.Error as e:
-            print("Ошибка получения статьи из БД " + str(e))
+            print("getMfkAnonce Ошибка получения статьи из БД " + str(e))
 
         return []
 
 
-    def addComment(self, username, mfkname, score, mfktitle):
+    def addComment(self, username, mfkname, score, mfktitle, reason):
         try:
 
             tm = math.floor(time.time())
-            self.__cur.execute("INSERT INTO comments VALUES(NULL, ?, ?, ?, ?)", (username, mfkname, score, mfktitle))
+            self.__cur.execute("INSERT INTO comments VALUES(NULL, ?, ?, ?, ?, ?)", (username, mfkname, score, mfktitle, reason))
             self.__db.commit()
         except sqlite3.Error as e:
-            print("Ошибка добавления статьи в БД " + str(e))
+            print("addComment Ошибка добавления статьи в БД " + str(e))
             return False
 
         return True
 
     def getComment(self, alias):
         try:
-            self.__cur.execute(f"SELECT username, mfkname, score FROM comments WHERE mfkname LIKE {alias}")
+            self.__cur.execute(f"SELECT username, mfkname, score, reason FROM comments WHERE mfkname LIKE {alias}")
             # self.__cur.execute(f"SELECT * FROM comments")
             # self.__cur.execute("SELECT * FROM comments")
             res = self.__cur.fetchall()
             if res:
                 return res
         except sqlite3.Error as e:
-            print("Ошибка получения статьи из БД " + str(e))
+            print("getComment Ошибка получения статьи из БД " + str(e))
 
         return ()
 
     def getMfkScore(self, alias):
         try:
             self.__cur.execute(f"SELECT score FROM comments WHERE mfkname LIKE {alias}")
-            # self.__cur.execute(f"SELECT * FROM comments")
-            # self.__cur.execute("SELECT * FROM comments")
             res = self.__cur.fetchall()
             if res:
                 return res
         except sqlite3.Error as e:
-            print("Ошибка получения статьи из БД " + str(e))
+            print("getMfkScore Ошибка получения статьи из БД " + str(e))
 
         return ()
 
@@ -137,7 +135,7 @@ class FDataBase:
             self.__cur.execute(f"UPDATE mfk SET score = ? WHERE id = ?", (score, mfkname))
             self.__db.commit()
         except sqlite3.Error as e:
-            print("Ошибка обновления оценок мфк в БД: " + str(e))
+            print("updateMfkScore Ошибка обновления оценок мфк в БД: " + str(e))
             return False
         return True
 
@@ -148,7 +146,7 @@ class FDataBase:
             if res:
                 return res
         except sqlite3.Error as e:
-            print("Ошибка получения статьи из БД " + str(e))
+            print("getUsersE Ошибка получения статьи из БД " + str(e))
 
         return (False, False)
 
@@ -159,7 +157,7 @@ class FDataBase:
             if res:
                 return res
         except sqlite3.Error as e:
-            print("Ошибка получения статьи из БД " + str(e))
+            print("getUsersN Ошибка получения статьи из БД " + str(e))
 
         return (False, False)
 
@@ -168,7 +166,7 @@ class FDataBase:
             self.__cur.execute(f"UPDATE users SET psw = ? WHERE email = ?", (psw, email))
             self.__db.commit()
         except sqlite3.Error as e:
-            print("Ошибка обновления оценок мфк в БД: " + str(e))
+            print("updatePsw Ошибка обновления оценок мфк в БД: " + str(e))
             return False
         return True
 
@@ -180,7 +178,7 @@ class FDataBase:
             if res:
                 return res
         except sqlite3.Error as e:
-            print("Ошибка получения статьи из БД " + str(e))
+            print("getSearchMfk Ошибка получения статьи из БД " + str(e))
 
         return (False, False)
 
@@ -190,7 +188,7 @@ class FDataBase:
 
             self.__db.commit()
         except sqlite3.Error as e:
-            print("Ошибка обновления оценок мфк в БД: " + str(e))
+            print("delComment Ошибка обновления оценок мфк в БД: " + str(e))
             return False
         return True
 
@@ -200,7 +198,7 @@ class FDataBase:
             self.__cur.execute(f"UPDATE mfk SET score_numb = ? WHERE id = ?", (score_numb, mfk_id))
             self.__db.commit()
         except sqlite3.Error as e:
-            print("Ошибка обновления оценок мфк в БД: " + str(e))
+            print("updateMfkScoreNumb Ошибка обновления оценок мфк в БД: " + str(e))
             return False
         return True
 
@@ -211,7 +209,7 @@ class FDataBase:
             if res:
                 return res
         except sqlite3.Error as e:
-            print("Ошибка получения статьи из БД " + str(e))
+            print("getMfkScoreNumb Ошибка получения статьи из БД " + str(e))
         return ()
 
 

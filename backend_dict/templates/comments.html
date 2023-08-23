@@ -34,7 +34,7 @@
                     </div>
 
 
-                <p class="annonce">{{m.username}}<br>{{ m.text }}</p>
+                <p class="annonce">{{m.username}}<br>{{ m.reason }}</p>
             </li>
         {% endfor %}
     </ul>
@@ -42,6 +42,7 @@
 
     <form action="" method="post" class="form-contact">
         {{ form.hidden_tag() }}
+        {{ form.csrf_token }}
 
 
         <ul class="list-comments">
@@ -64,7 +65,7 @@
 
 
 
-
+        {{ form.reason(class="select-css") }}
         <div class="button_container">
             <div class="center">
 <!--                {{ form.submit(class="btn", type="submit") }}-->
