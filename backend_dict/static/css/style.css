@@ -236,6 +236,9 @@ body {
         width: auto;
         display: block;
     }
+    .my_logo{
+        display: none;
+    }
 
 }
 

@@ -6,12 +6,17 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>MFK Stars</title>
+        <link type="image/x-icon" rel="shortcut icon" href={{url_for('static', filename="png/favicon/favicon.ico")}}>
     </head>
     <body style="overflow: hidden;">
 
 
         <div class="menu" id="target">
-
+            <div style="background: white;" class="my_logo">
+                <img src={{url_for('static', filename="png/logo2_cut.png")}} alt="Logo is here"
+                      width="550"
+                      height="200"/>
+            </div>
             {% for m in menu %}
 
                     <a href="{{m.url}}">
