@@ -9,7 +9,8 @@
 Вам был оправлен код подверждения на почту: {{ my_mail }}
 <form action="/verify" method="post" class="form-contact">
 
-    {{ form_code.hidden_tag() }}
+                {{ form_code.hidden_tag() }}
+                {{ form_code.csrf_token }}
 
     {% for field in form_code if field.name not in ['csrf_token', 'submit'] -%}
         <br>
@@ -25,10 +26,10 @@
                    {{ field() }}
          {% endif %}
     {% endfor %}
-    {{ form.recaptcha }}
+    <br>
         <div  style="margin-bottom: 0px;" class="button_container">
         <div class="center">
-            <button class="btn" type="submit">
+            <button class="btn" type="submit" value="{{ csrf_token() }}">
                 <span class="btn_span">Подтвердить</span>
             </button>
         </div>

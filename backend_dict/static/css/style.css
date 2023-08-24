@@ -237,10 +237,10 @@ padding: .6em .8em .5em 1.4em;
     outline:none;
     background: var(--my-white);
 
-            box-sizing: border-box;
-        display: block;
-        max-width: 100%;
-        margin-right: 70px;
+    box-sizing: border-box;
+    display: block;
+    max-width: 100%;
+    margin-right: 70px;
 }
 
 .search-input:hover{
@@ -274,22 +274,33 @@ padding: .6em .8em .5em 1.4em;
         max-width: 100%;
         margin-right: 70px;
     }
-
-    .button_container{
+    ul.list-comments{
+        box-sizing: border-box;
         display: block;
         max-width: 100%;
-        margin-right: 70px;
+    }
+    ul.list-comments li{
+        box-sizing: border-box;
+        display: block;
+        max-width: 100%;
+    }
+
+    .button_container{
+        box-sizing: border-box;
+        display: block;
+        max-width: 100%;
     }
 
     .btn{
+        box-sizing: border-box;
         display: block;
         max-width: 100%;
-        box-sizing: border-box;
     }
     .button_container {
         display: block;
         max-width: 100%;
         box-sizing: border-box;
+
     }
 
     .center{

@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm, RecaptchaField
 import flask
-from wtforms import StringField, SubmitField, BooleanField, PasswordField, SelectField, RadioField, Label
-from wtforms.widgets import TextArea
+from wtforms import StringField, SubmitField, BooleanField, PasswordField, SelectField, RadioField, Label, HiddenField
+from wtforms.widgets import TextArea, Input
 from wtforms.validators import DataRequired, Email, Length, EqualTo, InputRequired
 import email_validator
 
@@ -23,7 +23,7 @@ class RegisterForm(FlaskForm):
                                                        message="Пароль должен быть от 4 до 100 символов")])
 
     psw2 = PasswordField("Повтор пароля: ", validators=[DataRequired(), EqualTo('psw', message="Пароли не совпадают")])
-    recaptcha = RecaptchaField()
+
     submit = SubmitField("Регистрация")
 
 class ValidateForm(FlaskForm):
@@ -47,7 +47,7 @@ class new_psw_form(FlaskForm):
 
 
 class starsForm(FlaskForm):
-    # text = StringField(u'Text', widget=TextArea())
+
     score = RadioField('Stars', validators=[InputRequired()], choices=[
         ('st5', 'Excellent'),
         ('st4', 'Good'),
@@ -67,6 +67,14 @@ class ContactForm(FlaskForm):
     text = StringField(u'Text', widget=TextArea())
     recaptcha = RecaptchaField()
     submit = SubmitField("Войти")
+
+
+class searchForm(FlaskForm):
+    search = StringField(u'Text')
+    submit = SubmitField("submit")
+
+class commentDelForm(FlaskForm):
+    submit = SubmitField("submit")
 
 
 

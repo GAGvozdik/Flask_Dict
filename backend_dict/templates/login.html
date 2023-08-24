@@ -3,10 +3,10 @@
 
 {% block content %}
     <form action="" method="post" class="form-contact">
-    {{ form.hidden_tag() }}
-
+                {{ form.hidden_tag() }}
+                {{ form.csrf_token }}
     {% for field in form if field.name not in ['csrf_token', 'remember', 'submit'] -%}
-         <br>
+
         {{ field.label() }}
          {% if field.errors %}
                    {{ field(class="invalid") }}
@@ -21,12 +21,12 @@
 
     {% endfor %}
 
-        <br>{{ form.remember.label() }} {{ form.remember() }}
-<!--        <br>{{ form.submit(class="my_btn") }}-->
+        {{ form.remember.label() }} {{ form.remember() }}
+
 
         <div  style="margin-bottom: 5px;" class="button_container">
             <div class="center">
-                <button class="btn" type="submit">
+                <button class="btn" type="submit" value="{{ csrf_token() }}">
                     <span class="btn_span">Войти</span>
                 </button>
             </div>

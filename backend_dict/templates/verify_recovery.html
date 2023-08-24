@@ -10,9 +10,9 @@
 <form action="/verify_recovery" method="post" class="form-contact">
 
     {{ form.hidden_tag() }}
-
+    {{ form.csrf_token }}
     {% for field in form if field.name not in ['csrf_token', 'submit'] -%}
-        <br>
+
          {{ field.label() }}
          {% if field.errors %}
                    {{ field(class="invalid") }}
@@ -25,10 +25,10 @@
                    {{ field() }}
          {% endif %}
     {% endfor %}
-
+        <br>
         <div  style="margin-bottom: 0px;" class="button_container">
         <div class="center">
-            <button class="btn" type="submit">
+            <button class="btn" type="submit" value="{{ csrf_token() }}">
                 <span class="btn_span">Подтвердить</span>
             </button>
         </div>

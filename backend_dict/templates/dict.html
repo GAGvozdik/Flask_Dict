@@ -6,17 +6,22 @@
 <!--        <ul style="border: 2px solid var(&#45;&#45;my-light-blue); border-radius: 10px; padding: 20px; width: 400px; margin: 0px; box-sizing: border-box;">-->
         <div class="filter-block">
             <h3 style="margin-top: 0px; text-align: center;">Фильтры / Поиск</h3>
-            <form method="POST" action="/dict">
-                <input class="search-input" placeholder="Введите запрос ..." name="search">
-                <br>
+            <form action="/dict" method="post" class="form-contact">
+                {{ form.hidden_tag() }}
+                {{ form.csrf_token }}
+                {{ form.search(class="search-input") }}
+
+
                 <div class="button_container">
                     <div class="center">
-                        <button class="btn">
+                        <button class="btn" type="submit" value="{{ csrf_token() }}">
                             <span style="font-size: 14px;" class="btn_span">Найти</span>
                         </button>
                     </div>
                 </div>
             </form>
+
+
 
             <a href="{{ url_for('dict')}}">
                 <div style="margin-top: 7px;" class="button_container">
@@ -28,6 +33,7 @@
                 </div>
             </a>
         </div>
+
     {% for cat, msg in get_flashed_messages(True) %}
         <div class="flash {{cat}}">{{msg}}</div>
     {% endfor %}
@@ -58,7 +64,7 @@
                             {% endfor %}
                           </div>
                         </div>
-                    <input type="hidden" name="mfk_name" value="{{ m.mfkname }}" />
+
                     <p style="color: black; margin-bottom:-15px; margin-top:7px; ">
                         {% if m.score_numb == None %}
                             Количество оценок: 0

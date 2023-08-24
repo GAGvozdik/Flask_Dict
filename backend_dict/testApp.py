@@ -9,9 +9,10 @@ from random import randint
 
 from FDataBase import FDataBase
 from UserLogin import UserLogin
-from forms import LoginForm, RegisterForm, starsForm, ValidateForm, recoveryForm, new_psw_form, ContactForm
+from forms import LoginForm, RegisterForm, starsForm, ValidateForm, recoveryForm, new_psw_form, ContactForm, searchForm, commentDelForm
 from test import add_mfk_to_db
 from flask_wtf.csrf import CSRFProtect
+import os
 
 app = Flask(__name__)
 
@@ -22,7 +23,7 @@ DEBUG = True
 USERNAME = 'admin'
 PASSWORD = 'grewgrth4h54h5h'
 
-csrf = CSRFProtect(app)
+
 # mail config
 
 mail = Mail(app)
@@ -30,14 +31,23 @@ mail = Mail(app)
 app.config["MAIL_SERVER"] = 'smtp.gmail.com'
 app.config["MAIL_PORT"] = 465
 app.config["MAIL_USERNAME"] = 'gvozdikgeorge@gmail.com'
-app.config['MAIL_PASSWORD'] = 'ydnvhhhewdfewbvg'
+app.config['MAIL_PASSWORD'] = 'mkdwvebgqqrmxkgt'
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
-app.config['SECRET_KEY'] = 'fdgfh78@#5?>gfhthrhew554f89dx,v06k'
-app.config['RECAPTCHA_PUBLIC_KEY'] = "6LcfMc0nAAAAABeRbVxX7mwr3XRmdyuac-vfdeWs"
-app.config['RECAPTCHA_PRIVATE_KEY'] = "6LcfMc0nAAAAADiDZ_tp45O1MPE8jXcfZk3D5Snn"
+app.config['SECRET_KEY'] = os.urandom(30).hex()
+app.config['RECAPTCHA_PUBLIC_KEY'] = "6LeRRc0nAAAAAHncCrhRoeYqSqlBBl5b0kODY_qQ"
+app.config['RECAPTCHA_PRIVATE_KEY'] = "6LeRRc0nAAAAAK6u6lMesUFuM-rnzQLWKFKI9xEV"
 
 mail = Mail(app)
+
+csrf = CSRFProtect(app)
+csrf.init_app(app)
+# app.config.update(
+#     SESSION_COOKIE_SECURE=True,
+#     SESSION_COOKIE_HTTPONLY=True,
+#     SESSION_COOKIE_SAMESITE='Lax',
+# )
+
 
 app.config.from_object(__name__)
 app.config.update(dict(DATABASE=os.path.join(app.root_path, 'flsite.db')))
@@ -106,15 +116,20 @@ def close_db(error):
 @app.route("/")
 @app.route("/dict", methods=['GET', 'POST'])
 def dict():
-    if request.method == 'POST':
-        mfk_table = dbase.getSearchMfk(request.form['search'])
+    form = searchForm()
+    form.search.render_kw = {'placeholder': 'Введите текст'}
+    print(0)
+    if form.validate_on_submit():
+
+        mfk_table = dbase.getSearchMfk(form.search.data)
+
         if mfk_table == (False, False):
             flash('МФК с таким описанием не найдено. Поменяйте формулировку', category='error')
-            return render_template('dict.html', my_text='МФК', menu=menu, mfk_table=dbase.getMfkAnonce())
+            return redirect('dict')
         else:
-            return render_template('dict.html', my_text='МФК', menu=menu, mfk_table=mfk_table)
+            return render_template('dict.html', my_text='МФК', menu=menu, mfk_table=mfk_table, form=form)
 
-    return render_template('dict.html', my_text='МФК', menu=menu, mfk_table=dbase.getMfkAnonce(), dbase=dbase)
+    return render_template('dict.html', my_text='МФК', menu=menu, mfk_table=dbase.getMfkAnonce(), dbase=dbase, form=form)
 
 
 @app.route("/about")
@@ -216,6 +231,9 @@ def login():
         return redirect(url_for('profile'))
 
     form = LoginForm()
+    form.psw.render_kw = {'class': 'search-input'}
+    form.email.render_kw = {'class': 'search-input'}
+
     if form.validate_on_submit():
         user = dbase.getUserByEmail(form.email.data)
         if user and check_password_hash(user['psw'], form.psw.data):
@@ -231,11 +249,15 @@ def login():
 @app.route("/register", methods=["POST", "GET"])
 def register():
     form = RegisterForm()
+    form.name.render_kw = {'class': 'search-input'}
+    form.psw.render_kw = {'class': 'search-input'}
+    form.psw2.render_kw = {'class': 'search-input'}
+    form.email.render_kw = {'class': 'search-input'}
 
     if form.validate_on_submit():
         if dbase.getUsersE(form.email.data) == (False, False):
             if dbase.getUsersN(form.name.data) == (False, False):
-                msg = Message(subject='Verification code MFK Stars', sender='gvozdikgeorge@gmail.com',
+                msg = Message(subject='Verification code MFK Stars', sender='MFKStars@gmail.com',
                               recipients=[form.email.data])
                 otp = randint(000000, 999999)
                 msg.body = 'MFK Stars. Код подтверждения: ' + str(otp)
@@ -256,12 +278,15 @@ def register():
 @app.route('/password_recovery', methods=["POST", "GET"])
 def password_recovery():
     form = recoveryForm()
+    form.email.render_kw = {'class': 'search-input'}
+
     if form.validate_on_submit():
         if dbase.getUsersE(form.email.data) != (False, False):
 
-            msg = Message(subject='Verification code MFK Stars', sender='gvozdikgeorge@gmail.com',
+            msg = Message(subject='Verification code MFK Stars', sender='MFKStars@gmail.com',
                           recipients=[form.email.data])
             otp = randint(000000, 999999)
+            print(otp)
             msg.body = 'MFK Stars. Код подтверждения: ' + str(otp)
             mail.send(msg)
 
@@ -279,6 +304,7 @@ def password_recovery():
 @app.route('/verify', methods=["POST", "GET"])
 def verify():
     form_code = ValidateForm()
+    form_code.email_code.render_kw = {'class': 'search-input'}
 
     email = session.get('email')
     my_mail = email[:3] + "@" * len(email[3:])
@@ -306,6 +332,7 @@ def verify():
 @app.route('/verify_recovery', methods=["POST", "GET"])
 def verify_recovery():
     form = ValidateForm()
+    form.email_code.render_kw = {'class': 'search-input'}
 
     email = session.get('recovery_email')
     my_mail = email[:3] + "@" * len(email[3:])
@@ -328,6 +355,8 @@ def verify_recovery():
 @app.route('/new_psw', methods=["POST", "GET"])
 def new_psw():
     form = new_psw_form()
+    form.psw.render_kw = {'class': 'search-input'}
+    form.psw2.render_kw = {'class': 'search-input'}
 
     email = session.get('recovery_email')
 
@@ -354,22 +383,13 @@ def logout():
 @app.route('/profile', methods=["POST", "GET"])
 @login_required
 def profile():
-    if request.method == 'POST':
-        if 'delete_comment_btn' in request.form:
+    form = commentDelForm()
+    if form.validate_on_submit():
+
             mfk_title = request.form.get('mfk_title')
             mfk_name = request.form.get('mfk_name')
             if mfk_title != "Вы еще не ставили оценки":
                 dbase.delComment(mfk_title, current_user.getName())
-
-                print('----------------------')
-                if dbase.getUserCommentsNumb(current_user.getName()) != (False, False):
-                    # for i in dbase.getUserCommentsNumb(current_user.getName()):
-                    #     for j in i:
-                    #         print('add comment = ', j)
-                    print('profile = ', len(dbase.getUserCommentsNumb(current_user.getName())))
-                else:
-                    print('profile = (False, False)')
-                print('----------------------')
 
                 if dbase.getUserCommentsNumb(current_user.getName()) != (False, False):
                     comments_numb = len(dbase.getUserCommentsNumb(current_user.getName()))
@@ -421,7 +441,7 @@ def profile():
         comments_numb = 0
     dbase.updateUserCommentsNumb(comments_numb, current_user.getEmail())
 
-    return render_template('profile.html', menu=menu, your_comments=your_comments, comments_numb=comments_numb)
+    return render_template('profile.html', menu=menu, your_comments=your_comments, comments_numb=comments_numb, form=form)
 
 
 @login_manager.user_loader
@@ -433,8 +453,10 @@ def load_user(user_id):
 @login_required
 def contacts():
     form = ContactForm()
+    form.text.render_kw = {'style': 'height: 200px; width: 350px; ', 'class': 'search-input'}
+    form.recaptcha.render_kw = {'style': 'box-sizing: border-box; display: block; max-width: 100%;'}
     if form.validate_on_submit():
-        msg = Message(subject='Отзывы и пожелания', sender='gvozdikgeorge@gmail.com', recipients=['nagel20@yandex.ru'])
+        msg = Message(subject='Отзывы и пожелания', sender='MFKStars@gmail.com', recipients=['nagel20@yandex.ru'])
 
         m = ''
         m += str(current_user.getName())

@@ -49,9 +49,12 @@
             </li>
 
             <form method="POST" action="/profile">
+                {{ form.hidden_tag() }}
+                {{ form.csrf_token }}
                 <input type="hidden" name="mfk_title" value="{{ m.mfktitle }}" />
                 <input type="hidden" name="mfk_name" value="{{ m.mfkname }}" />
-                  <div class="button_container">
+
+                <div class="button_container">
                     <div class="center">
                       <button class="btn" name="delete_comment_btn">
                         <span style="font-size: 14px;" class="btn_span">Удалить комментарий</span>
