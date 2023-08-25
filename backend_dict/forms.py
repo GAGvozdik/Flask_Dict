@@ -76,5 +76,26 @@ class searchForm(FlaskForm):
 class commentDelForm(FlaskForm):
     submit = SubmitField("submit")
 
+class PollForm1(FlaskForm):
+
+
+    other1 = StringField()
+    other2 = StringField()
+
+    problems1 = remember = BooleanField("Да, сложно было выбрать среди большого количества вариантов", default=False)
+    problems2 = remember = BooleanField("Да, сложно было успеть записаться на подходящий курс", default=False)
+    problems3 = remember = BooleanField("Да, не нашел вовремя информацию, как и когда это сделать", default=False)
+    problems4 = remember = BooleanField("Нет, никаких проблем не было", default=False)
+    problems5 = remember = BooleanField('Other:', default=False)
+
+    interested = RadioField('Stars', validators=[InputRequired()], choices=[
+        ('st5', 'Да, это было бы удобнее'),
+        ('st4', 'Возможно, попробовал бы'),
+        ('st3', 'Нет, меня всё устраивает'),
+        ('st2', 'Нет, никаких проблем не было'),
+        ('st1', 'Other:')
+    ])
+    submit = SubmitField("submit")
+
 
 

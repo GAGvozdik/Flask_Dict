@@ -10,6 +10,7 @@ from random import randint
 from FDataBase import FDataBase
 from UserLogin import UserLogin
 from forms import LoginForm, RegisterForm, starsForm, ValidateForm, recoveryForm, new_psw_form, ContactForm, searchForm, commentDelForm
+from forms import PollForm1
 from test import add_mfk_to_db
 from flask_wtf.csrf import CSRFProtect
 import os
@@ -62,6 +63,7 @@ menu = [
     {"title": "Авторизация", "url": "/login"},
     {"title": "Подобрать МФК", "url": "/question"},
     {"title": "Обратная связь", "url": "/contacts"},
+    {"title": "Опрос", "url": "/poll"},
     {"title": "О нас", "url": "/about"}]
 
 max_commetns_numb = 7
@@ -127,6 +129,12 @@ def close_db(error):
 ##############################################################################
 # Main pages
 ##############################################################################
+
+@app.route("/poll", methods=['GET', 'POST'])
+def poll():
+    form = PollForm1()
+
+    return render_template('poll.html', my_text='Опросговна', menu=menu, form=form)
 
 @app.route("/")
 @app.route("/dict", methods=['GET', 'POST'])

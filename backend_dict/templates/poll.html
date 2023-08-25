@@ -1,0 +1,64 @@
+{% extends 'index.html' %}
+
+{% block content %}
+{{ super() }}
+{% for cat, msg in get_flashed_messages(True) %}
+<div class="flash {{cat}}">{{msg}}</div>
+{% endfor %}
+
+
+
+
+    <h2>Ваши оценки</h2>
+    <form method="POST" action="/poll">
+        {{ form.hidden_tag() }}
+        {{ form.csrf_token }}
+
+
+        <ul class="list-comments" style="list-style-type: none;">
+            <li style="border-radius: 10px; width: 600px; float:center; margin-left: auto; margin-right: auto;" >
+                <h1 style="margin: 10px;">Консультант МФК</h1>
+                Мы хотим создать сервис для студентов МГУ для рекомендации межфакультетских курсов студентам на основе их академических интересов, истории предыдущих курсов и карьерных целей.
+Межфакультетский учебный курс (МФК) — это еженедельный семестровый курс, который студент МГУ может прослушать на любом факультете по своему выбору.  Студентам 3 курса бакалавриата, 3 и 4 курсов специалитета и 1 курса магистратуры очной формы обучения освоение МФК обязательно в объеме 1 курса в семестр.
+Мы будем рады, если вы поделитесь с нами вашим опытом прохождения МФК
+            </li>
+
+            <li style="border-radius: 10px; background: white; width: 600px; float:center; margin-left: auto; margin-right: auto;" >
+                <img src={{url_for('static', filename="png/logo2_cut.png")}} alt="Logo is here"
+                  width="550"
+                  height="200"/>
+            </li>
+
+            <li style="border-radius: 10px; background: white; width: 600px; float:center; margin-left: auto; margin-right: auto;" >
+                Сталкивались вы с проблемами при выборе и записи на  МФК? *
+                <div>{{ form.problems1 }}{{ form.problems1.label() }}</div>
+                <div>{{ form.problems2 }}{{ form.problems2.label() }}</div>
+                <div>{{ form.problems3 }}{{ form.problems3.label() }}</div>
+                <div>{{ form.problems4 }}{{ form.problems4.label() }}</div>
+                <div>{{ form.problems5 }}{{ form.problems5.label() }}</div>
+                <div>{{ form.other1 }}</div>
+            </li>
+
+            <li style="list-style-type: none; border-radius: 10px; background: white; width: 600px; float:center; margin-left: auto; margin-right: auto;" >
+                Было бы вам интересно использовать сервис подбора МФК по рекомендациям и вашим критериям?
+                {{ form.interested(class="radio-field") }}
+                <div>{{ form.other1 }}</div>
+            </li>
+
+            <li style="border-radius: 10px; background: white; width: 600px; float:center; margin-left: auto; margin-right: auto;" >
+                Проходили ли вы МФК?*
+            </li>
+
+            {{ form.submit }}
+
+        </ul>
+
+    </form>
+{% endblock %}
+
+
+
+
+
+
+
