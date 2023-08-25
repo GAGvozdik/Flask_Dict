@@ -244,7 +244,7 @@ padding: .6em .8em .5em 1.4em;
 }
 
 .search-input:hover{
-    padding: 3px 2.5px 3px 32.5px;
+    padding: 3px 2.5px 3px 21px;
     transition: 0.4s ease-in-out;
 }
 

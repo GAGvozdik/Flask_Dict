@@ -21,7 +21,7 @@ DATABASE = '/tmp/flsite.db'
 DEBUG = True
 
 USERNAME = 'admin'
-PASSWORD = 'grewgrth4h54h5h'
+PASSWORD = os.urandom(50).hex()
 
 
 # mail config
@@ -34,7 +34,7 @@ app.config["MAIL_USERNAME"] = 'gvozdikgeorge@gmail.com'
 app.config['MAIL_PASSWORD'] = 'mkdwvebgqqrmxkgt'
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
-app.config['SECRET_KEY'] = os.urandom(30).hex()
+app.config['SECRET_KEY'] = os.urandom(50).hex()
 app.config['RECAPTCHA_PUBLIC_KEY'] = "6LeRRc0nAAAAAHncCrhRoeYqSqlBBl5b0kODY_qQ"
 app.config['RECAPTCHA_PRIVATE_KEY'] = "6LeRRc0nAAAAAK6u6lMesUFuM-rnzQLWKFKI9xEV"
 
@@ -81,6 +81,21 @@ def create_db():
     db.commit()
     db.close()
 
+    add_mfk_to_db()
+
+def rewrite_db():
+    conn = sqlite3.connect('flsite.db')
+    cursor = conn.cursor()
+
+    cursor.execute('DROP TABLE IF EXISTS comments')
+    conn.commit()
+    cursor.execute('DROP TABLE IF EXISTS users')
+    conn.commit()
+    cursor.execute('DROP TABLE IF EXISTS mfk')
+
+    conn.commit()
+    conn.close()
+    create_db()
     add_mfk_to_db()
 
 
@@ -265,7 +280,7 @@ def register():
                 print(otp)
                 session['name'] = form.name.data
                 session['email'] = form.email.data
-                session['password'] = form.psw.data
+                session['password'] = generate_password_hash(form.psw.data)
                 session['otp'] = otp
                 return redirect(url_for('verify'))
             else:
@@ -316,7 +331,7 @@ def verify():
         if str(otp) == user_otp:
             flash("Email подтвержден", "success")
 
-            hash = generate_password_hash(session.get('password'))
+            hash = session.get('password')
             res = dbase.addUser(session.get('name'), session.get('email'), hash)
             if res:
                 flash("Вы успешно зарегистрированы", "success")
@@ -325,6 +340,8 @@ def verify():
                 flash("Ошибка при добавлении в БД", "error")
         else:
             flash("Неверный код подтверждения", "error")
+            print(otp)
+            print(user_otp)
 
     return render_template('verify.html', form_code=form_code, my_mail=my_mail)
 
@@ -343,7 +360,7 @@ def verify_recovery():
 
         user_otp = form.email_code.data
 
-        if str(otp) == user_otp:
+        if otp == user_otp:
             flash("Email подтвержден", "success")
             return redirect(url_for('new_psw'))
         else:

@@ -70,13 +70,19 @@ def add_mfk_to_db():
         insert_varible_into_table(mfk_list[i][0], mfk_list[i][1], mfk_list[i][2], "", "", "0")
 
 
+def del_db():
+    conn = sqlite3.connect('flsite.db')
+    cursor = conn.cursor()
 
+    cursor.execute('DROP TABLE IF EXISTS comments')
+    conn.commit()
+    cursor.execute('DROP TABLE IF EXISTS users')
+    conn.commit()
+    cursor.execute('DROP TABLE IF EXISTS mfk')
 
-
-
-
-
-
+    conn.commit()
+    conn.close()
+# del_db()
 
 
 

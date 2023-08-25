@@ -8,8 +8,8 @@ import email_validator
 
 class LoginForm(FlaskForm):
     email = StringField("Email: ", validators=[Email("Некорректный email")])
-    psw = PasswordField("Пароль: ", validators=[DataRequired(), Length(min=4, max=100,
-                                                                       message="Пароль должен быть от 4 до 100 символов")])
+    psw = PasswordField("Пароль: ", validators=[DataRequired(), Length(min=8, max=100,
+                                                                       message="Пароль должен быть от 8 до 100 символов")])
     remember = BooleanField("Запомнить", default=False)
     recaptcha = RecaptchaField()
     submit = SubmitField("Войти")
