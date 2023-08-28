@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm, RecaptchaField
 import flask
 from wtforms import StringField, SubmitField, BooleanField, PasswordField, SelectField, RadioField, Label, HiddenField
 from wtforms.widgets import TextArea, Input
-from wtforms.validators import DataRequired, Email, Length, EqualTo, InputRequired
+from wtforms.validators import DataRequired, Email, Length, EqualTo, InputRequired, Optional
 import email_validator
 
 
@@ -71,16 +71,16 @@ class ContactForm(FlaskForm):
 
 class searchForm(FlaskForm):
     search = StringField(u'Text')
-    submit = SubmitField("submit")
+    submit = SubmitField("Найти")
 
 class commentDelForm(FlaskForm):
-    submit = SubmitField("submit")
+    submit = SubmitField("Удалить комментарий")
 
 class PollForm1(FlaskForm):
 
 
-    other1 = StringField()
-    other2 = StringField()
+    other1 = StringField("other1", validators=[Optional()])
+    other2 = StringField("other2", validators=[Optional()])
 
     problems1 = remember = BooleanField("Да, сложно было выбрать среди большого количества вариантов", default=False)
     problems2 = remember = BooleanField("Да, сложно было успеть записаться на подходящий курс", default=False)
@@ -95,7 +95,7 @@ class PollForm1(FlaskForm):
         ('st2', 'Нет, никаких проблем не было'),
         ('st1', 'Other:')
     ])
-    submit = SubmitField("submit")
+    submit = SubmitField("Отправить")
 
 
 

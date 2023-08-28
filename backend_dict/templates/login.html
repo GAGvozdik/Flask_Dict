@@ -3,57 +3,48 @@
 
 {% block content %}
     <form action="" method="post" class="form-contact">
-                {{ form.hidden_tag() }}
-                {{ form.csrf_token }}
-    {% for field in form if field.name not in ['csrf_token', 'remember', 'submit'] -%}
 
-        {{ field.label() }}
-         {% if field.errors %}
+        {{ form.hidden_tag() }}
+        {{ form.csrf_token }}
+
+        {% for field in form if field.name not in ['csrf_token', 'remember', 'submit'] -%}
+            {{ field.label() }}
+             {% if field.errors %}
                    {{ field(class="invalid") }}
-         <span class="invalid-feedback">
+                 <span class="invalid-feedback">
                    {% for e in field.errors %}
                    {{ e }}
                    {% endfor %}
-         </span>
-         {% else %}
-                   {{ field() }}
-         {% endif %}
+                 </span>
+             {% else %}
+                    {{ field() }}
+             {% endif %}
 
-    {% endfor %}
+        {% endfor %}
 
         {{ form.remember.label() }} {{ form.remember() }}
 
-
-        <div  style="margin-bottom: 5px;" class="button_container">
-            <div class="center">
-                <button class="btn" type="submit" value="{{ csrf_token() }}">
-                    <span class="btn_span">Войти</span>
-                </button>
-            </div>
+        <div style="margin-bottom: 5px;">
+            {{ form.submit( class="common_btn") }}
         </div>
-
 
 
     </form>
 
     <a href="{{url_for('register')}}">
-      <div style="margin-bottom: 5px;" class="button_container">
-        <div class="center">
-          <button class="btn">
-            <span style="font-size: 14px;" class="btn_span">Регистрация</span>
-          </button>
+        <div style="margin-bottom: 5px;">
+            <button class="common_btn">Регистрация</button>
         </div>
-      </div>
+
     </a>
 
+
+
+
     <a class="my_a" href="{{ url_for('password_recovery')}}">
-          <div class="button_container">
-            <div class="center">
-              <button class="btn">
-                <span style="font-size: 14px;" class="btn_span">Восстановить пароль</span>
-              </button>
-            </div>
-          </div>
+      <div class="">
+          <button class="common_btn">Восстановить пароль</button>
+      </div>
     </a>
     <br>
     {% for cat, msg in get_flashed_messages(True) %}

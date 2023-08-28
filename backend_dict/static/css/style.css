@@ -196,26 +196,56 @@ body {
     width: 225px;
     outline:none;
 }
- .select-css::-ms-expand { display: none; }
- .select-css:hover { border-color: #888; }
- .select-css:focus { border-color: #aaa;
- box-shadow: 0 0 1px 3px rgba(59, 153, 252, .7);
- box-shadow: 0 0 0 3px -moz-mac-focusring;
-color: #222;
- outline: none;
+select.custom-select {
+  /* Удаление стандартных стилей браузера */
+
+  -moz-appearance: none;
+
+
+  /* Размеры и отступы */
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 200px;
+
+  /* Стилизация фонового цвета и цвета текста */
+  background-color: var(--my-white);
+  color: #333;
+
+  /* Курсор и переходы */
+  cursor: pointer;
+  transition: background-color 0.3s, border-color 0.3s;
 }
- .select-css option { font-weight:normal; }
- *[dir="rtl"] .select-css, :root:lang(ar) .select-css, :root:lang(iw) .select-css {
-background-position: left .7em top 50%, 0 0;
-padding: .6em .8em .5em 1.4em;
+
+select.custom-select:hover{
+    transition: transform 0.6s ease-in-out;
+      box-shadow: 0px 2px 7px rgba(0, 0, 0, 0.15);
 }
+select.custom-select:hover,
+select.custom-select:focus {
+  /* Изменение фонового цвета и цвета текста при наведении или фокусе */
+    transition: transform 0.6s ease-in-out;
+  outline: none;
+}
+
+select.custom-select option {
+  /* Стилизация отдельных опций */
+  background-color: #f7f7f7;
+  color: #333;
+}
+
+select.custom-select option:hover {
+  /* Изменение фонового цвета и цвета текста опции при наведении */
+  background-color: #e0e0e0;
+}
+
 
 /* ------------------------------------------------------------------- */
 /* filters */
 /* ------------------------------------------------------------------- */
 
 .filter-block{
-    width: 450px;
+    width: 570px;
     border: 2px solid var(--my-light-blue);
     border-radius: 10px;
     padding: 20px;
@@ -261,7 +291,7 @@ padding: .6em .8em .5em 1.4em;
   color: var(--my-light-grey);
 }
 
-@media screen and (max-width: 550px) {
+@media screen and (max-width: 670px) {
 
     .filter-block{
         width: auto;
@@ -279,6 +309,13 @@ padding: .6em .8em .5em 1.4em;
         display: block;
         max-width: 100%;
     }
+
+    .common_btn{
+        box-sizing: border-box;
+        display: block;
+        max-width: 100%;
+    }
+
     ul.list-comments li{
         box-sizing: border-box;
         display: block;
@@ -308,6 +345,11 @@ padding: .6em .8em .5em 1.4em;
         max-width: 100%;
         box-sizing: border-box;
     }
+    .custom-select{
+        display: block;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
 
     .btn_span {
         font-size: 11px;
@@ -316,6 +358,7 @@ padding: .6em .8em .5em 1.4em;
     .my_logo{
         display: none;
     }
+
 
 }
 
@@ -364,6 +407,43 @@ hr {
 
 /* ------------------------------------------------------------------- */
 /* button */
+/* ------------------------------------------------------------------- */
+
+.common_btn {
+  background-color: var(--my-light-blue);
+  border-color: var(--my-light-blue);
+  color: var(--my-background);
+  border-radius: 5px;
+  padding: 7px 20px;
+  font-size: 16px;
+  border: 2px solid var(--my-light-blue);
+  transition: 0.4s ease-in-out;
+
+}
+
+.common_btn:hover {
+    background-color: var(--menu-blue);
+    color: var(--my-background);
+    border-color: var(--menu-blue);
+
+    border-radius: 8px;
+    box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.25);
+    transition: 0.4s ease-in-out;
+}
+
+.common_btn:active {
+
+    background-color: var(--my-white);
+    color: var(--my-light-blue);
+
+    border-radius: 8px;
+    box-shadow: none;
+    background: var(--my-white);
+    transition: 0.4s ease-in-out;
+}
+
+/* ------------------------------------------------------------------- */
+/* Nice button */
 /* ------------------------------------------------------------------- */
 
 .my_btn {
@@ -775,31 +855,267 @@ my_load_form input {
     width: 100%;
     height: 100%;
 }
+/* ------------------------------------------------------------------- */
+/*  */
+/* ------------------------------------------------------------------- */
+
+ul.poll-radio li{
+    background: white;
+    list-style-type: none;
+    margin: 5px;
+    padding: 0px;
+    width: auto;
+
+    border: 0px solid var(--menu-blue);
+    border-radius: 0px;
+
+}
+
+ul.poll-radio {
+    padding: 0px;
+    padding-inline-start: 0px;
+}
+
+
+
+input[type="radio"]:hover{
+    background: var(--my-background);
+    border-radius: 50%;
+}
+
+.poll-radio label{
+}
+
+
+ul.poll-radio input[type='radio'],
+label {
+  cursor: pointer;
+  vertical-align:middle;
+  align-items: middle;
+  margin:2.5px;
+}
+
+ul.poll-radio input[type='radio'] {
+  position: relative;
+  height: 25px;
+  width: 25px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  outline: none;
+
+
+}
+
+ul.poll-radio input[type='radio']::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border: 2px solid var(--my-grey);
+
+}
+
+ul.poll-radio input[type='radio']:checked::before {
+  background-color: white;
+  border: 2px solid var(--menu-blue);
+}
+
+ul.poll-radio input[type='radio']:hover:checked::before {
+  background-color: var(--my-background);
+}
+
+ul.poll-radio input[type='radio']:hover::before {
+  background-color: var(--my-background);
+}
+
+ul.poll-radio input[type='radio']:checked::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--menu-blue);
+  transform: translate(-50%, -50%) scale(1);
+  visibility: visible;
+
+
+}
+
 
 /* ------------------------------------------------------------------- */
 /*  */
 /* ------------------------------------------------------------------- */
-/* Стили для RadioField */
-.radio-field label {
-  display: block; /* Делает метку (текст) и радиокнопку в разных строках */
-  margin-bottom: 10px; /* Добавляет отступ между радиокнопками */
+/* Cancel default styles */
+.poll-checkbox {
+  display: flex;
+  align-items: center;
+  margin: 0;
 }
 
-.radio-field input[type="radio"] {
-  display: none; /* Скрывает радиокнопки по умолчанию */
+.poll-checkbox:hover {
+  background-color: var(--my-background);
+  border-radius: 15px;
+  height: 35px;
+  width: 35px;
+  margin-right: -4px;
+  margin-bottom: -9px;
 }
 
-.radio-field label:before {
-  content: ""; /* Добавляет пустой псевдоэлемент */
-  display: inline-block; /* Делает псевдоэлемент блочным элементом */
-  width: 1.2em; /* Задает ширину псевдоэлемента */
-  height: 1.2em; /* Задает высоту псевдоэлемента */
-  border: 2px solid #ccc; /* Добавляет рамку вокруг псевдоэлемента */
-  border-radius: 50%; /* Делает псевдоэлемент круглым */
-  margin-right: 10px; /* Добавляет отступ между радиокнопкой и текстом */
+.poll-checkbox input[type="checkbox"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: none;
+  outline: none;
+  position: relative;
+  margin-top: 7.23px;
+  margin-left: 7.17px;
+  border: 2px solid gray;
+  border-radius:3px;
 }
 
-.radio-field input[type="radio"]:checked + label:before {
-  background-color: #2196F3; /* Добавляет фоновый цвет для выбранной радиокнопки */
-  border-color: #2196F3; /* Изменяет цвет рамки для выбранной радиокнопки */
+/* Apply custom styles */
+.poll-checkbox input[type="checkbox"]::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  -webkit-clip-path: polygon(45% 64%, 84% 14%, 100% 28%, 47% 100%, 0 49%, 15% 32%);
+  clip-path: polygon(45% 64%, 84% 14%, 100% 28%, 47% 100%, 0 49%, 15% 32%);
+  -webkit-transform: scale(0);
+  transform: scale(0);
+  -webkit-transition: transform .3s;
+  transition: transform .3s;
 }
+
+.poll-checkbox input[type="checkbox"]:checked::after {
+  -webkit-transform: scale(0.9);
+  transform: scale(0.9);
+  background-color: white;
+  z-index:9;
+}
+
+.poll-checkbox input[type="checkbox"]:checked {
+  background-color: var(--menu-blue);
+  border-color: var(--menu-blue);
+}
+
+.poll-checkbox-label {
+  margin-left: 40px;
+  margin-bottom: 30px;
+}
+
+/* Media Query для уменьшения экрана */
+@media screen and (max-width: 600px) {
+  .poll-checkbox {
+    flex-direction: column;
+  }
+}
+/* ------------------------------------------------------------------- */
+/*  */
+/* ------------------------------------------------------------------- */
+.other{
+    position: relative;
+    display:inline-block;
+    float:right;
+    margin-top: -32px;
+    width: 450px;
+}
+.other1{
+    position: relative;
+    display:inline-block;
+    float:right;
+    margin-top: 0px;
+    width: 450px;
+}
+
+@media screen and (max-width: 675px) {
+
+    .other1{
+        max-width: 100%;
+        box-sizing: border-box;
+        display:inline-block;
+        float:left;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+
+    .other{
+        max-width: 100%;
+        box-sizing: border-box;
+        float:left;
+        margin-top: -40px;
+    }
+
+    .poll-radio{
+        margin-bottom: 50px;
+    }
+
+}
+
+/* ------------------------------------------------------------------- */
+/*  */
+/* ------------------------------------------------------------------- */
+
+.logoimg{
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+
+
+
+/* ------------------------------------------------------------------- */
+/*  */
+/* ------------------------------------------------------------------- */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

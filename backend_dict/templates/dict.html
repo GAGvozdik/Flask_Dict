@@ -7,31 +7,23 @@
         <div class="filter-block">
             <h3 style="margin-top: 0px; text-align: center;">Фильтры / Поиск</h3>
             <form action="/dict" method="post" class="form-contact">
+
                 {{ form.hidden_tag() }}
                 {{ form.csrf_token }}
                 {{ form.search(class="search-input") }}
 
+                {{ form.submit(class="common_btn") }}
 
-                <div class="button_container">
-                    <div class="center">
-                        <button class="btn" type="submit" value="{{ csrf_token() }}">
-                            <span style="font-size: 14px;" class="btn_span">Найти</span>
-                        </button>
-                    </div>
-                </div>
             </form>
 
 
 
             <a href="{{ url_for('dict')}}">
-                <div style="margin-top: 7px;" class="button_container">
-                    <div class="center">
-                        <button class="btn">
-                            <span style="font-size: 14px;" class="btn_span">Сбросить</span>
-                        </button>
-                    </div>
+                <div style="margin-top: 7px;" class="">
+                        <button class="common_btn">Сбросить</button>
                 </div>
             </a>
+
         </div>
 
     {% for cat, msg in get_flashed_messages(True) %}

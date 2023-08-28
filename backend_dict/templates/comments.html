@@ -46,7 +46,7 @@
 
 
         <ul class="list-comments">
-            <li style="height: 20px; ">
+            <li>
                 <div class="container_under_comment container">
                   <div class="container__items">
                     {% for subfield in form.score %}
@@ -60,20 +60,21 @@
                     {% endfor %}
                   </div>
                 </div>
+
+                <br>
+                <br>
+                <div style="margin-bottom: 10px; margin-top: 0px; font-size: 12px;">
+                    Укажите причину оценки:
+                </div>
+
+                <div style="margin-bottom: 10px;">{{ form.reason(class="custom-select") }}</div>
             </li>
         </ul>
 
 
 
-        {{ form.reason(class="select-css") }}
-        <div class="button_container">
-            <div class="center">
-<!--                {{ form.submit(class="btn", type="submit") }}-->
-                <button class="btn" type="submit">
-                    <span class="btn_span">Оставить оценку</span>
-                </button>
-            </div>
-        </div>
+
+        <div>{{ form.submit( class="common_btn") }}</div>
 
 
         {% for cat, msg in get_flashed_messages(True) %}

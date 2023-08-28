@@ -5,6 +5,7 @@ import sqlite3
 import os
 import numpy as np
 from flask_mail import Mail, Message
+from flask_bootstrap import Bootstrap
 from random import randint
 
 from FDataBase import FDataBase
@@ -16,7 +17,8 @@ from flask_wtf.csrf import CSRFProtect
 import os
 
 app = Flask(__name__)
-
+bootstrap = Bootstrap(app)
+# Bootstrap(app)
 # config
 DATABASE = '/tmp/flsite.db'
 DEBUG = True
@@ -133,6 +135,11 @@ def close_db(error):
 @app.route("/poll", methods=['GET', 'POST'])
 def poll():
     form = PollForm1()
+    form.interested.render_kw = {'style': '', 'class': ''}
+
+    if form.validate_on_submit():
+        if form.interested.data == 'st1' and not form.other2.data:
+            flash('Пожалуйста, укажите причину для выбора "Другое"', category='error')
 
     return render_template('poll.html', my_text='Опросговна', menu=menu, form=form)
 
@@ -152,7 +159,7 @@ def dict():
         else:
             return render_template('dict.html', my_text='МФК', menu=menu, mfk_table=mfk_table, form=form)
 
-    return render_template('dict.html', my_text='МФК', menu=menu, mfk_table=dbase.getMfkAnonce(), dbase=dbase, form=form)
+    return render_template('dict.html', my_text='МФК', menu=menu, mfk_table=dbase.getMfkAnonce(), dbase=dbase, form=form, bootstrap=bootstrap)
 
 
 @app.route("/about")

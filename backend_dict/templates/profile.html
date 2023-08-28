@@ -54,13 +54,7 @@
                 <input type="hidden" name="mfk_title" value="{{ m.mfktitle }}" />
                 <input type="hidden" name="mfk_name" value="{{ m.mfkname }}" />
 
-                <div class="button_container">
-                    <div class="center">
-                      <button class="btn" name="delete_comment_btn">
-                        <span style="font-size: 14px;" class="btn_span">Удалить комментарий</span>
-                      </button>
-                    </div>
-                  </div>
+                    {{ form.submit( class="common_btn") }}
             </form>
 
         {% endfor %}

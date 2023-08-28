@@ -27,13 +27,8 @@
          {% endif %}
     {% endfor %}
     <br>
-        <div  style="margin-bottom: 0px;" class="button_container">
-        <div class="center">
-            <button class="btn" type="submit" value="{{ csrf_token() }}">
-                <span class="btn_span">Подтвердить</span>
-            </button>
-        </div>
-    </div>
+
+    {{ form.submit( class="common_btn") }}
 
 
 </form>
