@@ -15,6 +15,8 @@ from forms import PollForm1
 from test import add_mfk_to_db
 from flask_wtf.csrf import CSRFProtect
 import os
+from admin.admin import admin
+
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
@@ -41,6 +43,7 @@ app.config['SECRET_KEY'] = os.urandom(50).hex()
 app.config['RECAPTCHA_PUBLIC_KEY'] = "6LeRRc0nAAAAAHncCrhRoeYqSqlBBl5b0kODY_qQ"
 app.config['RECAPTCHA_PRIVATE_KEY'] = "6LeRRc0nAAAAAK6u6lMesUFuM-rnzQLWKFKI9xEV"
 
+
 mail = Mail(app)
 
 csrf = CSRFProtect(app)
@@ -66,9 +69,15 @@ menu = [
     {"title": "Подобрать МФК", "url": "/question"},
     {"title": "Обратная связь", "url": "/contacts"},
     {"title": "Опрос", "url": "/poll"},
-    {"title": "О нас", "url": "/about"}]
+    {"title": "О нас", "url": "/about"},
+    {"title": "admin index", "url": "admin/index"},
+    {"title": "admin", "url": "/admin"}]
 
 max_commetns_numb = 7
+
+
+app.register_blueprint(admin, url_prefix='/admin')
+
 
 
 def connect_db():

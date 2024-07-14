@@ -1,0 +1,59 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block content %}
+{{ super() }}
+<div id="login" class="wnd_dlg_back login_wnd">
+<div class="login">
+	<p class="title">Админ-панель</p>
+{% for cat, msg in get_flashed_messages(True) %}
+<div class="flash {{cat}}">{{msg}}</div>
+{% endfor %}
+
+
+<form action="" method="post" class="form-contact">
+	{{ form.hidden_tag() }}
+	{{ form.csrf_token }}
+
+
+	{% for field in form if field.name not in ['csrf_token', 'remember', 'submit'] -%}
+		{{ field.label() }}
+		 {% if field.errors %}
+			   {{ field(class="invalid") }}
+			 <span class="invalid-feedback">
+			   {% for e in field.errors %}
+ 
+			   {% endfor %}
+			 </span>
+		 {% else %}
+				{{ field() }}
+		 {% endif %}
+
+	{% endfor %}
+
+	<div style="display: flex;">
+		{{ form.remember.label() }} 
+		{{ form.remember() }}
+	</div>
+
+	<div style="margin-bottom: 5px;">
+		{{ form.submit( class="common_btn") }}
+	</div>
+
+</form>
+
+
+
+
+    <br>
+    {% for cat, msg in get_flashed_messages(True) %}
+        <div class="flash {{cat}}">{{msg}}</div>
+    {% endfor %}
+
+
+</div>
+</div>{% endblock %}
+
+
+
+
+

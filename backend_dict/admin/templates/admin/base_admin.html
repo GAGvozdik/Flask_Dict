@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+	<head>
+    <!-- <link type="text/css" href={{url_for('static', filename="css/style.css")}} rel="stylesheet" /> -->
+	<link type="text/css" href="{{ url_for('.static', filename='css/styles.css')}}" rel="stylesheet" />
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{{ title }}</title>
+
+    </head>
+    <body>
+
+        {% if menu -%}
+        
+            <ul class="mainmenu">
+                {% for p in menu %}
+                    <li><a href="{{ url_for(p.url) }}">{{p.title}}</a></li>
+                {% endfor %}
+            </ul>
+
+            <div class="clear"></div>
+            
+        {%- endif -%}
+
+
+        <div class="content">
+            <h2>{{ my_text }}</h2>
+
+            <hr>
+            <div class="between_hr">
+                {% block content %}
+                        {{my_text}}
+                {% endblock %}
+            </div>
+            <hr>
+            <br>Вернуться на <a class="main_a" href="/dict">главную</a> страницу.
+        </div>
+
+
+    </body>
+
+</html>
