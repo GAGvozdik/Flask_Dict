@@ -17,6 +17,8 @@ from flask_wtf.csrf import CSRFProtect
 import os
 from admin.admin import admin
 
+#TODO вкладка авторизация ведет на пустую страницу 
+
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
@@ -70,7 +72,6 @@ menu = [
     {"title": "Обратная связь", "url": "/contacts"},
     {"title": "Опрос", "url": "/poll"},
     {"title": "О нас", "url": "/about"},
-    {"title": "admin index", "url": "admin/index"},
     {"title": "admin", "url": "/admin"}]
 
 max_commetns_numb = 7

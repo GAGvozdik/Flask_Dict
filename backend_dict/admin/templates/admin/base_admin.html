@@ -9,35 +9,44 @@
         <title>{{ title }}</title>
 
     </head>
+
     <body>
+        <nav>
+            <div class="navbar">
+                <div class="menu_container nav-container">
+                
+                </div>
+            </div>
+        </nav>
 
         {% if menu -%}
-        
-            <ul class="mainmenu">
-                {% for p in menu %}
-                    <li><a href="{{ url_for(p.url) }}">{{p.title}}</a></li>
-                {% endfor %}
-            </ul>
-
-            <div class="clear"></div>
             
-        {%- endif -%}
+            {% for m in menu %}
 
+                <a href="{{ url_for(m.url) }}">
+                    <div class="block">
+                        {{m.title}}
+                    </div>
+                </a>
+            
+            {% endfor %}
+
+        {%- endif -%}
 
         <div class="content">
             <h2>{{ my_text }}</h2>
-
             <hr>
             <div class="between_hr">
                 {% block content %}
-                        {{my_text}}
+
+                    {{my_text}}
+                    
                 {% endblock %}
             </div>
             <hr>
             <br>Вернуться на <a class="main_a" href="/dict">главную</a> страницу.
         </div>
-
-
     </body>
+
 
 </html>

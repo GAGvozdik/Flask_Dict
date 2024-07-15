@@ -1,13 +1,19 @@
 import sqlite3
 from flask import Blueprint, render_template, url_for, redirect, session, request, flash, g
-from admin.forms import LoginForm
+from admin.adminForms import AdminLoginForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from UserLogin import UserLogin
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from flask import current_app
 
 admin = Blueprint('admin', __name__, template_folder='templates', static_folder='static')
 
-menu = [{'url': '.index', 'title': 'Панель'},
+#TODO logout redirect to empty page
+
+menu = [
+    # вылетало при входе в админку
+    # {'url': '/dict', 'title': 'На главную'},
+        {'url': '.index', 'title': 'Панель'},
         {'url': '.listusers', 'title': 'Список пользователей'},
         {'url': '.listpubs', 'title': 'Список статей'},
         {'url': '.logout', 'title': 'Выйти'}]
@@ -50,30 +56,19 @@ def login():
         return redirect(url_for('.index'))
 
 
-    form = LoginForm()
+    form = AdminLoginForm()
     form.psw.render_kw = {'class': 'search-input'}
     form.email.render_kw = {'class': 'search-input'}
 
     if form.validate_on_submit():
         if form.email.data == 'admin' and form.psw.data == '12345':
-            # userlogin = UserLogin().create('admin')
-            # rm = form.remember.data
-            # login_user(userlogin, remember=rm)
+
             login_admin()
             
             return redirect(url_for('.index'))
 
         flash("Неверная пара логин/пароль", "error")
     return render_template("login.html", menu=menu, my_text="Авторизация", form=form)
-
-    # if request.method == "POST":
-    #     if request.form['user'] == "admin" and request.form['psw'] == "12345":
-    #         login_admin()
-    #         return redirect(url_for('.index'))
-    #     else:
-    #         flash("Неверная пара логин/пароль", "error")
-
-    # return render_template('admin/login.html', title='Админ-панель')
 
 
 @admin.route('/logout', methods=["POST", "GET"])
@@ -83,7 +78,7 @@ def logout():
 
     logout_admin()
 
-    return redirect(url_for('.login'))
+    return redirect(url_for('.logout'))
 
 @admin.route('/list-pubs')
 def listpubs():
