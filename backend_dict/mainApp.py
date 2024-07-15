@@ -1,25 +1,23 @@
-from flask import Flask, render_template, request, g, url_for, abort, flash, session, redirect, make_response
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from random import randint
 import sqlite3
 import os
 import numpy as np
+from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
+
+from flask import Flask, render_template, request, g, url_for, abort, flash, session, redirect, make_response
 from flask_mail import Mail, Message
 from flask_bootstrap import Bootstrap
-from random import randint
-
-from FDataBase import FDataBase
-from UserLogin import UserLogin
-from forms import LoginForm, RegisterForm, starsForm, ValidateForm, recoveryForm, new_psw_form, ContactForm, searchForm, commentDelForm
-from forms import PollForm1
-
 from flask_wtf.csrf import CSRFProtect
-import os
-from admin.admin import admin
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
-from Models import db, Comments, Mfk, Users
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 
+from FDataBase import FDataBase, dbORM
+from UserLogin import UserLogin
+from forms import LoginForm, RegisterForm, starsForm, ValidateForm, recoveryForm
+from forms import PollForm1, ContactForm, searchForm, commentDelForm, new_psw_form
+from Models import db, Comments, Mfk, Users
+from admin.admin import admin
 
 #TODO вкладка авторизация ведет на пустую страницу 
 #TODO importы почисть
@@ -33,22 +31,17 @@ bootstrap = Bootstrap(app)
 # config
 
 #TODO use SQLAlchemy
-DATABASE = '/tmp/flsite.db'
+# DATABASE = '/tmp/flsite.db'
 DEBUG = True
 
 USERNAME = 'admin'
-PASSWORD = os.urandom(50).hex()
-
+PASSWORD = "6LeRRc0vdht&%4^46yhhfqlBBl5b0kODY_qQ"
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///MainDB.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)  
 
-
-
-
 # mail config
-
 mail = Mail(app)
 
 app.config["MAIL_SERVER"] = 'smtp.gmail.com'
@@ -65,15 +58,8 @@ mail = Mail(app)
 
 csrf = CSRFProtect(app)
 csrf.init_app(app)
-# app.config.update(
-#     SESSION_COOKIE_SECURE=True,
-#     SESSION_COOKIE_HTTPONLY=True,
-#     SESSION_COOKIE_SAMESITE='Lax',
-# )
 
 app.config.from_object(__name__)
-#TODO use SQLAlchemy
-app.config.update(dict(DATABASE=os.path.join(app.root_path, 'flsite.db')))
 
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
@@ -91,59 +77,21 @@ menu = [
 
 max_commetns_numb = 7
 
-app.register_blueprint(admin, url_prefix='/admin')
 
-#TODO use SQLAlchemy
-def connect_db():
-    conn = sqlite3.connect(app.config['DATABASE'])
-    conn.row_factory = sqlite3.Row
-    return conn
+def create_db():
+    db.create_all()
 
 
-#TODO use SQLAlchemy
 # def rewrite_db():
-#     conn = sqlite3.connect('flsite.db')
-#     cursor = conn.cursor()
-
-#     cursor.execute('DROP TABLE IF EXISTS comments')
-#     conn.commit()
-#     cursor.execute('DROP TABLE IF EXISTS users')
-#     conn.commit()
-#     cursor.execute('DROP TABLE IF EXISTS mfk')
-
-#     conn.commit()
-#     conn.close()
-#     create_db()
 #     add_mfk_to_db()
-
-#TODO use SQLAlchemy
-# def get_db():
-#     '''Соединение с БД, если оно еще не установлено'''
-#     if not hasattr(g, 'link_db'):
-#         g.link_db = connect_db()
-#     return g.link_db
-
-dbase = None
-
-#TODO use SQLAlchemy
-# @app.before_request
-# def before_request():
-#     """Установление соединения с БД перед выполнением запроса"""
-#     global dbase
-#     db = get_db()
-#     dbase = FDataBase(db)
-
-#TODO use SQLAlchemy
-# @app.teardown_appcontext
-# def close_db(error):
-#     '''Закрываем соединение с БД, если оно было установлено'''
-#     if hasattr(g, 'link_db'):
-#         g.link_db.close()
 
 
 ##############################################################################
 # Main pages
 ##############################################################################
+
+
+app.register_blueprint(admin, url_prefix='/admin')
 
 @app.route("/poll", methods=['GET', 'POST'])
 def poll():
@@ -165,17 +113,17 @@ def dict():
     if form.validate_on_submit():
 
         #TODO use SQLAlchemy
-        # mfk_table = dbase.getSearchMfk(form.search.data)
+        mfk_table = Mfk.getSearchMfk(form.search.data)
 
-        # if mfk_table == (False, False):
-        #     flash('МФК с таким описанием не найдено. Поменяйте формулировку', category='error')
-        #     return redirect('dict')
-        # else:
-        #     return render_template('dict.html', my_text='МФК', menu=menu, mfk_table=mfk_table, form=form)
-        pass
+        if mfk_table == (False, False):
+            flash('МФК с таким описанием не найдено. Поменяйте формулировку', category='error')
+            return redirect('dict')
+        else:
+            return render_template('dict.html', my_text='МФК', menu=menu, mfk_table=mfk_table, form=form)
+
     
-    # return render_template('dict.html', my_text='МФК', menu=menu, mfk_table=dbase.getMfkAnonce(), dbase=dbase, form=form, bootstrap=bootstrap)
-    return render_template('dict.html', my_text='МФК', menu=menu, mfk_table=[], dbase=dbase, form=form, bootstrap=bootstrap)
+    return render_template('dict.html', my_text='МФК', menu=menu, mfk_table=Mfk.getMfkAnonce(), dbase=db, form=form, bootstrap=bootstrap)
+
 
 
 @app.route("/about")
@@ -192,7 +140,7 @@ def showMfk(alias):
     #     abort(404)
 
     # return render_template('mfk.html', menu=menu, mfk=mfk, alias=alias, my_comments=dbase.getComment(alias))
-    return render_template('mfk.html', menu=menu, mfk=[], alias=alias, my_comments=dbase.getComment(alias))
+    return render_template('mfk.html', menu=menu, mfk=[], alias=alias, my_comments=[])
 
 
 @app.route("/question", methods=['GET', 'POST'])
@@ -270,7 +218,7 @@ def addComment(alias):
         pass
 
     # return render_template('comments.html', menu=menu, mfk=mfk, alias=alias, my_comments=dbase.getComment(alias), form=form)
-    return render_template('comments.html', menu=menu, mfk=[], alias=alias, my_comments=dbase.getComment(alias), form=form)
+    return render_template('comments.html', menu=menu, mfk=[], alias=alias, my_comments=[], form=form)
 
 
 @app.errorhandler(404)
@@ -521,7 +469,7 @@ def profile():
 def load_user(user_id):
 
     #TODO use SQLAlchemy
-    return UserLogin().fromDB(user_id, dbase)
+    return UserLogin().fromDB(user_id, db)
 
 
 @app.route("/contacts", methods=["POST", "GET"])

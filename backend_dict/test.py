@@ -62,7 +62,7 @@ def read_table(db):
 
 def add_mfk_to_db():
 
-    mfk_list=read_table("data.db")
+    mfk_list=read_table("legacy/data.db")
 
     for i in range(len(mfk_list)):
         tm = math.floor(time.time())
@@ -84,8 +84,8 @@ def del_db():
     conn.close()
 # del_db()
 
-from mainApp import db
-db.create_all()
+# from mainApp import db
+# db.create_all()
 
 
 

@@ -1,6 +1,41 @@
 import sqlite3
 import math
 import time
+from Models import db, Comments, Mfk, Users
+from werkzeug.security import generate_password_hash, check_password_hash
+
+
+class dbORM:
+    def __init__(self, db):
+        self.db = db
+
+    def addUser(self, name, email, hpsw):
+        try:
+            # Проверка, существует ли пользователь с таким email
+            existing_user = self.db.session.query(Users).filter_by(email=email).first()
+            if existing_user:
+                print("Пользователь с таким email уже существует")
+                return False
+
+            # Создание нового пользователя
+            new_user = Users(
+                name=name,
+                email=email,
+                psw=generate_password_hash(hpsw),  # Хеширование пароля
+                comments_numb=0,
+                time=int(time.time())  # Время в секундах
+            )
+
+            # Добавление пользователя в базу данных
+            self.db.session.add(new_user)
+            self.db.session.commit()
+
+            return True
+
+        except Exception as e:
+            print("addUser Ошибка добавления пользователя в БД " + str(e))
+            self.db.session.rollback()  # Откат транзакции в случае ошибки
+            return False
 
 
 class FDataBase:
