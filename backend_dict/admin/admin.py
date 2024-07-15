@@ -29,17 +29,18 @@ def logout_admin():
 
 
 db = None
-@admin.before_request
-def before_request():
-    """Установление соединения с БД перед выполнением запроса"""
-    global db
-    db = g.get('link_db')
+#TODO use SQLAlchemy
+# @admin.before_request
+# def before_request():
+#     """Установление соединения с БД перед выполнением запроса"""
+#     global db
+#     db = g.get('link_db')
 
-@admin.teardown_request
-def teardown_request(request):
-    global db
-    db = None
-    return request
+# @admin.teardown_request
+# def teardown_request(request):
+#     global db
+#     db = None
+#     return request
 
 @admin.route('/')
 @admin.route('/base_admin')
@@ -86,13 +87,14 @@ def listpubs():
         return redirect(url_for('.login'))
 
     list = []
-    if db:
-        try:
-            cur = db.cursor()
-            cur.execute(f"SELECT title, text, url FROM posts")
-            list = cur.fetchall()
-        except sqlite3.Error as e:
-            print("Ошибка получения статей из БД " + str(e))
+    #TODO use SQLAlchemy
+    # if db:
+    #     try:
+    #         cur = db.cursor()
+    #         cur.execute(f"SELECT title, text, url FROM posts")
+    #         list = cur.fetchall()
+    #     except sqlite3.Error as e:
+    #         print("Ошибка получения статей из БД " + str(e))
 
     return render_template('admin/listpubs.html', title='Список статей', menu=menu, list=list)
 
@@ -102,12 +104,13 @@ def listusers():
         return redirect(url_for('.login'))
 
     list = []
-    if db:
-        try:
-            cur = db.cursor()
-            cur.execute(f"SELECT name, email FROM users ORDER BY time DESC")
-            list = cur.fetchall()
-        except sqlite3.Error as e:
-            print("Ошибка получения статей из БД " + str(e))
+    #TODO use SQLAlchemy
+    # if db:
+    #     try:
+    #         cur = db.cursor()
+    #         cur.execute(f"SELECT name, email FROM users ORDER BY time DESC")
+    #         list = cur.fetchall()
+    #     except sqlite3.Error as e:
+    #         print("Ошибка получения статей из БД " + str(e))
 
     return render_template('admin/listusers.html', title='Список пользователей', menu=menu, list=list)

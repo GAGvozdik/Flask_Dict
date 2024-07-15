@@ -1,8 +1,12 @@
 from flask_login import UserMixin
 from flask import url_for
 
+#TODO use SQLAlchemy
+
 class UserLogin(UserMixin):
     def fromDB(self, user_id, db):
+
+        #TODO use SQLAlchemy
         self.__user = db.getUser(user_id)
         return self
 

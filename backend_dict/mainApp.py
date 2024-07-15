@@ -12,23 +12,39 @@ from FDataBase import FDataBase
 from UserLogin import UserLogin
 from forms import LoginForm, RegisterForm, starsForm, ValidateForm, recoveryForm, new_psw_form, ContactForm, searchForm, commentDelForm
 from forms import PollForm1
-from test import add_mfk_to_db
+
 from flask_wtf.csrf import CSRFProtect
 import os
 from admin.admin import admin
+from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
+from Models import db, Comments, Mfk, Users
+
 
 #TODO вкладка авторизация ведет на пустую страницу 
-
+#TODO importы почисть
+#TODO use SQLAlchemy
+#TODO 
+#TODO 
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
 # Bootstrap(app)
 # config
+
+#TODO use SQLAlchemy
 DATABASE = '/tmp/flsite.db'
 DEBUG = True
 
 USERNAME = 'admin'
 PASSWORD = os.urandom(50).hex()
+
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///MainDB.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db.init_app(app)  
+
+
 
 
 # mail config
@@ -45,7 +61,6 @@ app.config['SECRET_KEY'] = os.urandom(50).hex()
 app.config['RECAPTCHA_PUBLIC_KEY'] = "6LeRRc0nAAAAAHncCrhRoeYqSqlBBl5b0kODY_qQ"
 app.config['RECAPTCHA_PRIVATE_KEY'] = "6LeRRc0nAAAAAK6u6lMesUFuM-rnzQLWKFKI9xEV"
 
-
 mail = Mail(app)
 
 csrf = CSRFProtect(app)
@@ -56,8 +71,8 @@ csrf.init_app(app)
 #     SESSION_COOKIE_SAMESITE='Lax',
 # )
 
-
 app.config.from_object(__name__)
+#TODO use SQLAlchemy
 app.config.update(dict(DATABASE=os.path.join(app.root_path, 'flsite.db')))
 
 login_manager = LoginManager(app)
@@ -76,66 +91,54 @@ menu = [
 
 max_commetns_numb = 7
 
-
 app.register_blueprint(admin, url_prefix='/admin')
 
-
-
+#TODO use SQLAlchemy
 def connect_db():
     conn = sqlite3.connect(app.config['DATABASE'])
     conn.row_factory = sqlite3.Row
     return conn
 
 
-def create_db():
-    """Вспомогательная функция для создания таблиц БД"""
-    db = connect_db()
-    with app.open_resource('sq_db.sql', mode='r') as f:
-        db.cursor().executescript(f.read())
-    db.commit()
-    db.close()
+#TODO use SQLAlchemy
+# def rewrite_db():
+#     conn = sqlite3.connect('flsite.db')
+#     cursor = conn.cursor()
 
-    add_mfk_to_db()
+#     cursor.execute('DROP TABLE IF EXISTS comments')
+#     conn.commit()
+#     cursor.execute('DROP TABLE IF EXISTS users')
+#     conn.commit()
+#     cursor.execute('DROP TABLE IF EXISTS mfk')
 
-def rewrite_db():
-    conn = sqlite3.connect('flsite.db')
-    cursor = conn.cursor()
+#     conn.commit()
+#     conn.close()
+#     create_db()
+#     add_mfk_to_db()
 
-    cursor.execute('DROP TABLE IF EXISTS comments')
-    conn.commit()
-    cursor.execute('DROP TABLE IF EXISTS users')
-    conn.commit()
-    cursor.execute('DROP TABLE IF EXISTS mfk')
-
-    conn.commit()
-    conn.close()
-    create_db()
-    add_mfk_to_db()
-
-
-def get_db():
-    '''Соединение с БД, если оно еще не установлено'''
-    if not hasattr(g, 'link_db'):
-        g.link_db = connect_db()
-    return g.link_db
-
+#TODO use SQLAlchemy
+# def get_db():
+#     '''Соединение с БД, если оно еще не установлено'''
+#     if not hasattr(g, 'link_db'):
+#         g.link_db = connect_db()
+#     return g.link_db
 
 dbase = None
 
+#TODO use SQLAlchemy
+# @app.before_request
+# def before_request():
+#     """Установление соединения с БД перед выполнением запроса"""
+#     global dbase
+#     db = get_db()
+#     dbase = FDataBase(db)
 
-@app.before_request
-def before_request():
-    """Установление соединения с БД перед выполнением запроса"""
-    global dbase
-    db = get_db()
-    dbase = FDataBase(db)
-
-
-@app.teardown_appcontext
-def close_db(error):
-    '''Закрываем соединение с БД, если оно было установлено'''
-    if hasattr(g, 'link_db'):
-        g.link_db.close()
+#TODO use SQLAlchemy
+# @app.teardown_appcontext
+# def close_db(error):
+#     '''Закрываем соединение с БД, если оно было установлено'''
+#     if hasattr(g, 'link_db'):
+#         g.link_db.close()
 
 
 ##############################################################################
@@ -161,15 +164,18 @@ def dict():
     print(0)
     if form.validate_on_submit():
 
-        mfk_table = dbase.getSearchMfk(form.search.data)
+        #TODO use SQLAlchemy
+        # mfk_table = dbase.getSearchMfk(form.search.data)
 
-        if mfk_table == (False, False):
-            flash('МФК с таким описанием не найдено. Поменяйте формулировку', category='error')
-            return redirect('dict')
-        else:
-            return render_template('dict.html', my_text='МФК', menu=menu, mfk_table=mfk_table, form=form)
-
-    return render_template('dict.html', my_text='МФК', menu=menu, mfk_table=dbase.getMfkAnonce(), dbase=dbase, form=form, bootstrap=bootstrap)
+        # if mfk_table == (False, False):
+        #     flash('МФК с таким описанием не найдено. Поменяйте формулировку', category='error')
+        #     return redirect('dict')
+        # else:
+        #     return render_template('dict.html', my_text='МФК', menu=menu, mfk_table=mfk_table, form=form)
+        pass
+    
+    # return render_template('dict.html', my_text='МФК', menu=menu, mfk_table=dbase.getMfkAnonce(), dbase=dbase, form=form, bootstrap=bootstrap)
+    return render_template('dict.html', my_text='МФК', menu=menu, mfk_table=[], dbase=dbase, form=form, bootstrap=bootstrap)
 
 
 @app.route("/about")
@@ -179,11 +185,14 @@ def about():
 
 @app.route("/mfk/<alias>", methods=['GET', 'POST'])
 def showMfk(alias):
-    mfk = dbase.getMfk(alias)
-    if not mfk:
-        abort(404)
+    
+    #TODO use SQLAlchemy
+    # mfk = dbase.getMfk(alias)
+    # if not mfk:
+    #     abort(404)
 
-    return render_template('mfk.html', menu=menu, mfk=mfk, alias=alias, my_comments=dbase.getComment(alias))
+    # return render_template('mfk.html', menu=menu, mfk=mfk, alias=alias, my_comments=dbase.getComment(alias))
+    return render_template('mfk.html', menu=menu, mfk=[], alias=alias, my_comments=dbase.getComment(alias))
 
 
 @app.route("/question", methods=['GET', 'POST'])
@@ -195,69 +204,73 @@ def question():
 @app.route("/addComment/<alias>", methods=['GET', 'POST'])
 @login_required
 def addComment(alias):
-    mfk = dbase.getMfk(alias)
-    if not mfk:
-        abort(404)
+
+    #TODO use SQLAlchemy
+    # mfk = dbase.getMfk(alias)
+    # if not mfk:
+    #     abort(404)
 
     form = starsForm()
     if form.validate_on_submit():
 
-        comments_numb = len(dbase.getUserCommentsNumb(current_user.getName()))
+        #TODO use SQLAlchemy
+        # comments_numb = len(dbase.getUserCommentsNumb(current_user.getName()))
 
-        if comments_numb < max_commetns_numb:
+        # if comments_numb < max_commetns_numb:
 
-            is_comment_already_added = 0
-            if dbase.getUserCommentsNumb(current_user.getName()) != (False, False):
-                for i in dbase.getUserCommentsNumb(current_user.getName()):
-                    for j in i:
-                        if j == mfk[0]:
-                            is_comment_already_added = 1
+        #     is_comment_already_added = 0
+        #     if dbase.getUserCommentsNumb(current_user.getName()) != (False, False):
+        #         for i in dbase.getUserCommentsNumb(current_user.getName()):
+        #             for j in i:
+        #                 if j == mfk[0]:
+        #                     is_comment_already_added = 1
 
-            if is_comment_already_added == 0:
-                res = dbase.addComment(current_user.getName(), str(alias), form.score.data[-1], mfk[0], form.reason.data)
-                if not res:
-                    flash('Ошибка. Оценка не добавлена, попробуйте перезагрузить страницу', category='error')
-                else:
-                    flash('Оценка добавлена успешно', category='success')
+        #     if is_comment_already_added == 0:
+        #         res = dbase.addComment(current_user.getName(), str(alias), form.score.data[-1], mfk[0], form.reason.data)
+        #         if not res:
+        #             flash('Ошибка. Оценка не добавлена, попробуйте перезагрузить страницу', category='error')
+        #         else:
+        #             flash('Оценка добавлена успешно', category='success')
 
-                    if dbase.getUserCommentsNumb(current_user.getName()) != (False, False):
-                        comments_numb = len(dbase.getUserCommentsNumb(current_user.getName()))
-                    else:
-                        comments_numb = 0
-                    dbase.updateUserCommentsNumb(comments_numb, current_user.getEmail())
+        #             if dbase.getUserCommentsNumb(current_user.getName()) != (False, False):
+        #                 comments_numb = len(dbase.getUserCommentsNumb(current_user.getName()))
+        #             else:
+        #                 comments_numb = 0
+        #             dbase.updateUserCommentsNumb(comments_numb, current_user.getEmail())
 
-                    # ----------------------------------------------
-                    score_list = dbase.getMfkScore(alias)
-                    mfk_score = 0
-                    len_score_list = 0
-                    for i in score_list:
-                        for j in i:
-                            mfk_score += int(j)
-                            len_score_list += 1
+        #             # ----------------------------------------------
+        #             score_list = dbase.getMfkScore(alias)
+        #             mfk_score = 0
+        #             len_score_list = 0
+        #             for i in score_list:
+        #                 for j in i:
+        #                     mfk_score += int(j)
+        #                     len_score_list += 1
 
-                    mfk_score = round(mfk_score / len_score_list)
-                    dbase.updateMfkScore(alias, mfk_score)
+        #             mfk_score = round(mfk_score / len_score_list)
+        #             dbase.updateMfkScore(alias, mfk_score)
 
-                    score_numb = dbase.getMfkScoreNumb(alias)
-                    for i in score_numb:
-                        for j in i:
-                            score_numb = j
+        #             score_numb = dbase.getMfkScoreNumb(alias)
+        #             for i in score_numb:
+        #                 for j in i:
+        #                     score_numb = j
 
-                    if score_numb == None:
-                        score_numb = 1
-                    else:
-                        score_numb += 1
-                    print('score_numb', score_numb)
-                    dbase.updateMfkScoreNumb(alias, score_numb)
+        #             if score_numb == None:
+        #                 score_numb = 1
+        #             else:
+        #                 score_numb += 1
+        #             print('score_numb', score_numb)
+        #             dbase.updateMfkScoreNumb(alias, score_numb)
 
-            else:
-                flash('Вы уже оставляли оценку этому мфк', category='error')
-        else:
-            flash('Вы достигли лимита коментариев. Удалите комментарий, чтобы добавить новый', category='error')
-        return redirect(url_for('showMfk', alias=alias))
+        #     else:
+        #         flash('Вы уже оставляли оценку этому мфк', category='error')
+        # else:
+        #     flash('Вы достигли лимита коментариев. Удалите комментарий, чтобы добавить новый', category='error')
+        # return redirect(url_for('showMfk', alias=alias))
+        pass
 
-    return render_template('comments.html', menu=menu, mfk=mfk, alias=alias, my_comments=dbase.getComment(alias),
-                           form=form)
+    # return render_template('comments.html', menu=menu, mfk=mfk, alias=alias, my_comments=dbase.getComment(alias), form=form)
+    return render_template('comments.html', menu=menu, mfk=[], alias=alias, my_comments=dbase.getComment(alias), form=form)
 
 
 @app.errorhandler(404)
@@ -275,12 +288,14 @@ def login():
     form.email.render_kw = {'class': 'search-input'}
 
     if form.validate_on_submit():
-        user = dbase.getUserByEmail(form.email.data)
-        if user and check_password_hash(user['psw'], form.psw.data):
-            userlogin = UserLogin().create(user)
-            rm = form.remember.data
-            login_user(userlogin, remember=rm)
-            return redirect(request.args.get("next") or url_for("profile"))
+        
+        #TODO use SQLAlchemy
+        # user = dbase.getUserByEmail(form.email.data)
+        # if user and check_password_hash(user['psw'], form.psw.data):
+        #     userlogin = UserLogin().create(user)
+        #     rm = form.remember.data
+        #     login_user(userlogin, remember=rm)
+        #     return redirect(request.args.get("next") or url_for("profile"))
 
         flash("Неверная пара логин/пароль", "error")
     return render_template("login.html", menu=menu, my_text="Авторизация", form=form)
@@ -295,23 +310,26 @@ def register():
     form.email.render_kw = {'class': 'search-input'}
 
     if form.validate_on_submit():
-        if dbase.getUsersE(form.email.data) == (False, False):
-            if dbase.getUsersN(form.name.data) == (False, False):
-                msg = Message(subject='Verification code MFK Stars', sender='MFKStars@gmail.com',
-                              recipients=[form.email.data])
-                otp = randint(000000, 999999)
-                msg.body = 'MFK Stars. Код подтверждения: ' + str(otp)
-                mail.send(msg)
-                print(otp)
-                session['name'] = form.name.data
-                session['email'] = form.email.data
-                session['password'] = generate_password_hash(form.psw.data)
-                session['otp'] = otp
-                return redirect(url_for('verify'))
-            else:
-                flash("Пользователь с таким именем уже зарегистрирован", "error")
-        else:
-            flash("Пользователь с такой почтой уже зарегистрирован", "error")
+        #TODO use SQLAlchemy
+        # if dbase.getUsersE(form.email.data) == (False, False):
+        #     if dbase.getUsersN(form.name.data) == (False, False):
+        #         msg = Message(subject='Verification code MFK Stars', sender='MFKStars@gmail.com',
+        #                       recipients=[form.email.data])
+        #         otp = randint(000000, 999999)
+        #         msg.body = 'MFK Stars. Код подтверждения: ' + str(otp)
+        #         mail.send(msg)
+        #         print(otp)
+        #         session['name'] = form.name.data
+        #         session['email'] = form.email.data
+        #         session['password'] = generate_password_hash(form.psw.data)
+        #         session['otp'] = otp
+        #         return redirect(url_for('verify'))
+        #     else:
+        #         flash("Пользователь с таким именем уже зарегистрирован", "error")
+        # else:
+        #     flash("Пользователь с такой почтой уже зарегистрирован", "error")
+        pass
+
     return render_template("register.html", menu=menu, my_text="Регистрация", form=form)
 
 
@@ -321,23 +339,26 @@ def password_recovery():
     form.email.render_kw = {'class': 'search-input'}
 
     if form.validate_on_submit():
-        if dbase.getUsersE(form.email.data) != (False, False):
+        #TODO use SQLAlchemy
+        # if dbase.getUsersE(form.email.data) != (False, False):
 
-            msg = Message(subject='Verification code MFK Stars', sender='MFKStars@gmail.com',
-                          recipients=[form.email.data])
-            otp = randint(000000, 999999)
-            print(otp)
-            msg.body = 'MFK Stars. Код подтверждения: ' + str(otp)
-            mail.send(msg)
+        #     msg = Message(subject='Verification code MFK Stars', sender='MFKStars@gmail.com',
+        #                   recipients=[form.email.data])
+        #     otp = randint(000000, 999999)
+        #     print(otp)
+        #     msg.body = 'MFK Stars. Код подтверждения: ' + str(otp)
+        #     mail.send(msg)
 
-            session['recovery_email'] = form.email.data
-            session['recovery_email_code'] = otp
+        #     session['recovery_email'] = form.email.data
+        #     session['recovery_email_code'] = otp
 
-            flash("На вашу почту был выслан код подтверждения", "success")
-            return redirect(url_for('verify_recovery'))
-        else:
-            flash("Пользователь с такой почтой не найден", "error")
-            return redirect(url_for('login'))
+        #     flash("На вашу почту был выслан код подтверждения", "success")
+        #     return redirect(url_for('verify_recovery'))
+        # else:
+        #     flash("Пользователь с такой почтой не найден", "error")
+        #     return redirect(url_for('login'))
+        pass
+
     return render_template('password_recovery.html', form=form)
 
 
@@ -357,12 +378,15 @@ def verify():
             flash("Email подтвержден", "success")
 
             hash = session.get('password')
-            res = dbase.addUser(session.get('name'), session.get('email'), hash)
-            if res:
-                flash("Вы успешно зарегистрированы", "success")
-                return redirect(url_for('login'))
-            else:
-                flash("Ошибка при добавлении в БД", "error")
+            
+            #TODO use SQLAlchemy
+            # res = dbase.addUser(session.get('name'), session.get('email'), hash)
+            # if res:
+            #     flash("Вы успешно зарегистрированы", "success")
+            #     return redirect(url_for('login'))
+            # else:
+            #     flash("Ошибка при добавлении в БД", "error")
+
         else:
             flash("Неверный код подтверждения", "error")
             print(otp)
@@ -405,12 +429,15 @@ def new_psw():
     if form.validate_on_submit():
 
         hash = generate_password_hash(form.psw.data)
-        res = dbase.updatePsw(email, hash)
-        if res:
-            flash("Пароль успешно изменен", "success")
-            return redirect(url_for('login'))
-        else:
-            flash("Ошибка при добавлении в БД", "error")
+        
+        #TODO use SQLAlchemy
+        # res = dbase.updatePsw(email, hash)
+        # if res:
+        #     flash("Пароль успешно изменен", "success")
+        #     return redirect(url_for('login'))
+        # else:
+        #     flash("Ошибка при добавлении в БД", "error")
+
     return render_template('new_psw.html', form=form)
 
 
@@ -428,66 +455,72 @@ def profile():
     form = commentDelForm()
     if form.validate_on_submit():
 
-            mfk_title = request.form.get('mfk_title')
-            mfk_name = request.form.get('mfk_name')
-            if mfk_title != "Вы еще не ставили оценки":
-                dbase.delComment(mfk_title, current_user.getName())
+        mfk_title = request.form.get('mfk_title')
+        mfk_name = request.form.get('mfk_name')
 
-                if dbase.getUserCommentsNumb(current_user.getName()) != (False, False):
-                    comments_numb = len(dbase.getUserCommentsNumb(current_user.getName()))
-                else:
-                    comments_numb = 0
-                dbase.updateUserCommentsNumb(comments_numb, current_user.getEmail())
+        #TODO use SQLAlchemy
+        # if mfk_title != "Вы еще не ставили оценки":
+        #     dbase.delComment(mfk_title, current_user.getName())
 
-                score_list = dbase.getMfkScore(mfk_name)
-                mfk_score = 0
-                len_score_list = 0
+        #     if dbase.getUserCommentsNumb(current_user.getName()) != (False, False):
+        #         comments_numb = len(dbase.getUserCommentsNumb(current_user.getName()))
+        #     else:
+        #         comments_numb = 0
+        #     dbase.updateUserCommentsNumb(comments_numb, current_user.getEmail())
 
-                for i in score_list:
-                    for j in i:
-                        mfk_score += int(j)
-                        len_score_list += 1
+        #     score_list = dbase.getMfkScore(mfk_name)
+        #     mfk_score = 0
+        #     len_score_list = 0
 
-                if len_score_list == 0:
-                    mfk_score = 0
-                else:
-                    mfk_score = round(mfk_score / len_score_list)
+        #     for i in score_list:
+        #         for j in i:
+        #             mfk_score += int(j)
+        #             len_score_list += 1
 
-                dbase.updateMfkScore(mfk_name, mfk_score)
+        #     if len_score_list == 0:
+        #         mfk_score = 0
+        #     else:
+        #         mfk_score = round(mfk_score / len_score_list)
 
-                score_numb = dbase.getMfkScoreNumb(mfk_name)
-                for i in score_numb:
-                    for j in i:
-                        score_numb = j
+        #     dbase.updateMfkScore(mfk_name, mfk_score)
 
-                if (score_numb == None) or (score_numb == 0):
-                    score_numb = 0
-                else:
-                    score_numb -= 1
-                dbase.updateMfkScoreNumb(mfk_name, score_numb)
+        #     score_numb = dbase.getMfkScoreNumb(mfk_name)
+        #     for i in score_numb:
+        #         for j in i:
+        #             score_numb = j
 
-    your_comments = dbase.getUserCommentsNumb(current_user.getName())
-    if your_comments == (False, False):
-        class Person:
-            def __init__(self, name):
-                self.name = name
+        #     if (score_numb == None) or (score_numb == 0):
+        #         score_numb = 0
+        #     else:
+        #         score_numb -= 1
+        #     dbase.updateMfkScoreNumb(mfk_name, score_numb)
 
-        your_comments = [Person("")]
-        your_comments[0].score = ""
-        your_comments[0].mfkname = "Вы еще не ставили оценки"
-        your_comments[0].mfktitle = "Вы еще не ставили оценки"
+    #TODO use SQLAlchemy
+    # your_comments = dbase.getUserCommentsNumb(current_user.getName())
+    # if your_comments == (False, False):
+    #     class Person:
+    #         def __init__(self, name):
+    #             self.name = name
 
-    if dbase.getUserCommentsNumb(current_user.getName()) != (False, False):
-        comments_numb = len(dbase.getUserCommentsNumb(current_user.getName()))
-    else:
-        comments_numb = 0
-    dbase.updateUserCommentsNumb(comments_numb, current_user.getEmail())
+    #     your_comments = [Person("")]
+    #     your_comments[0].score = ""
+    #     your_comments[0].mfkname = "Вы еще не ставили оценки"
+    #     your_comments[0].mfktitle = "Вы еще не ставили оценки"
 
-    return render_template('profile.html', menu=menu, your_comments=your_comments, comments_numb=comments_numb, form=form)
+    # if dbase.getUserCommentsNumb(current_user.getName()) != (False, False):
+    #     comments_numb = len(dbase.getUserCommentsNumb(current_user.getName()))
+    # else:
+    #     comments_numb = 0
+    # dbase.updateUserCommentsNumb(comments_numb, current_user.getEmail())
+
+    # return render_template('profile.html', menu=menu, your_comments=your_comments, comments_numb=comments_numb, form=form)
+    return render_template('profile.html', menu=menu, your_comments=[], comments_numb=999, form=form)
 
 
 @login_manager.user_loader
 def load_user(user_id):
+
+    #TODO use SQLAlchemy
     return UserLogin().fromDB(user_id, dbase)
 
 

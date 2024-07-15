@@ -84,8 +84,8 @@ def del_db():
     conn.close()
 # del_db()
 
-
-
+from mainApp import db
+db.create_all()
 
 
 
