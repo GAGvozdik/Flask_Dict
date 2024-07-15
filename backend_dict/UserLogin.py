@@ -1,5 +1,7 @@
 from flask_login import UserMixin
 from flask import url_for
+from Models import Comments, Mfk, Users
+
 
 #TODO use SQLAlchemy
 
@@ -7,7 +9,7 @@ class UserLogin(UserMixin):
     def fromDB(self, user_id, db):
 
         #TODO use SQLAlchemy
-        self.__user = db.getUser(user_id)
+        self.__user = Users.getUser(user_id)
         return self
 
     def create(self, user):
@@ -15,27 +17,27 @@ class UserLogin(UserMixin):
         return self
 
     def get_id(self):
-        return str(self.__user['id'])
+        return str(self.__user.id)
 
     def getName(self):
-        return self.__user['name'] if self.__user else "Без имени"
+        return self.__user.name if self.__user else "Без имени"
 
     def getEmail(self):
-        return self.__user['email'] if self.__user else "Без email"
+        return self.__user.email if self.__user else "Без email"
 
     def get_comments_numb(self):
-        return self.__user['comments_numb'] if self.__user else "Без комментариев"
+        return self.__user.comments_numb if self.__user else "Без комментариев"
 
     def getAvatar(self, app):
         img = None
-        if not self.__user['avatar']:
+        if not self.__user.avatar:
             try:
                 with app.open_resource(app.root_path + url_for('static', filename='images/default.png'), "rb") as f:
                     img = f.read()
             except FileNotFoundError as e:
                 print("Не найден аватар по умолчанию: " + str(e))
         else:
-            img = self.__user['avatar']
+            img = self.__user.avatar
 
         return img
 

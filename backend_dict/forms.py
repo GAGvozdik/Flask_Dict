@@ -4,14 +4,14 @@ from wtforms import StringField, SubmitField, BooleanField, PasswordField, Selec
 from wtforms.widgets import TextArea, Input
 from wtforms.validators import DataRequired, Email, Length, EqualTo, InputRequired, Optional
 import email_validator
-
+#TODO re comment captcha
 
 class LoginForm(FlaskForm):
     email = StringField("Email: ", validators=[Email("Некорректный email")])
     psw = PasswordField("Пароль: ", validators=[DataRequired(), Length(min=8, max=100,
                                                                        message="Пароль должен быть от 8 до 100 символов")])
     remember = BooleanField("Запомнить", default=False)
-    recaptcha = RecaptchaField()
+    # recaptcha = RecaptchaField()
     submit = SubmitField("Войти")
 
 
@@ -28,7 +28,7 @@ class RegisterForm(FlaskForm):
 
 class ValidateForm(FlaskForm):
     email_code = StringField("Введите код подтверждения: ")
-    recaptcha = RecaptchaField()
+    # recaptcha = RecaptchaField()
     submit = SubmitField("Подтвердить")
 
 class recoveryForm(FlaskForm):
@@ -65,7 +65,7 @@ class starsForm(FlaskForm):
 
 class ContactForm(FlaskForm):
     text = StringField(u'Text', widget=TextArea())
-    recaptcha = RecaptchaField()
+    # recaptcha = RecaptchaField()
     submit = SubmitField("Войти")
 
 
