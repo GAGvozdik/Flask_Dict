@@ -15,18 +15,31 @@ from auth.authForms import ValidateForm, recoveryForm, RegisterForm, LoginForm, 
 
 from auth.UserLogin import UserLogin
 
-from mainApp import login_manager, mail
+# from mainApp import login_manager, mail
 
 
 
-auth = Blueprint('auth', __name__, template_folder='templates', static_folder='.static')
+userAuth = Blueprint('userAuth', __name__, template_folder='templates', static_folder='.static')
 
+# mail config
+mail = Mail(userAuth)
 
+userAuth.config["MAIL_SERVER"] = 'smtp.gmail.com'
+userAuth.config["MAIL_PORT"] = 465
+userAuth.config["MAIL_USERNAME"] = 'gvozdikgeorge@gmail.com'
+userAuth.config['MAIL_PASSWORD'] = 'mkdwvebgqqrmxkgt'
+userAuth.config['MAIL_USE_TLS'] = False
+userAuth.config['MAIL_USE_SSL'] = True
+userAuth.config['SECRET_KEY'] = os.urandom(50).hex()
+userAuth.config['RECAPTCHA_PUBLIC_KEY'] = "6LeRRc0nAAAAAHncCrhRoeYqSqlBBl5b0kODY_qQ"
+userAuth.config['RECAPTCHA_PRIVATE_KEY'] = "6LeRRc0nAAAAAK6u6lMesUFuM-rnzQLWKFKI9xEV"
 
-# login_manager = LoginManager(auth)
-# login_manager.login_view = 'login'
-# login_manager.login_message = "Авторизуйтесь для доступа к закрытым страницам"
-# login_manager.login_message_category = "success"
+mail = Mail(userAuth)
+
+login_manager = LoginManager(userAuth)
+login_manager.login_view = 'login'
+login_manager.login_message = "Авторизуйтесь для доступа к закрытым страницам"
+login_manager.login_message_category = "success"
 
 
 # @postView.route("/", methods=['GET', 'POST'])
@@ -54,9 +67,9 @@ auth = Blueprint('auth', __name__, template_folder='templates', static_folder='.
 #################################################################################
 
 
-@auth.route("/login", methods=["POST", "GET"])
+@userAuth.route("/login", methods=["POST", "GET"])
 def login():
-    if current_user.is_authenticated:
+    if current_user.is_userAuthenticated:
         return redirect(url_for('profile'))
 
     form = LoginForm()
@@ -75,7 +88,7 @@ def login():
             return redirect(request.args.get("next") or url_for("profile"))
 
         flash("Неверная пара логин/пароль", "error")
-    return render_template("postview/login.html", my_text="Авторизация", form=form)
+    return render_template("userAuth/login.html", my_text="Авторизация", form=form)
 
 
 @login_manager.user_loader
@@ -85,7 +98,7 @@ def load_user(user_id):
     return Users.getUser(user_id)
 
 
-@auth.route('/logout')
+@userAuth.route('/logout')
 @login_required
 def logout():
     logout_user()
@@ -98,7 +111,7 @@ def logout():
 #################################################################################
 
 
-@auth.route("/register", methods=["POST", "GET"])
+@userAuth.route("/register", methods=["POST", "GET"])
 def register():
     form = RegisterForm()
     form.name.render_kw = {'class': 'search-input'}
@@ -127,14 +140,14 @@ def register():
             flash("Пользователь с такой почтой уже зарегистрирован", "error")
         pass
 
-    return render_template("postview/register.html", my_text="Регистрация", form=form)
+    return render_template("userAuth/register.html", my_text="Регистрация", form=form)
 
 
 #################################################################################
 # psw recovery + veryfy ++
 #################################################################################
 
-@auth.route('/password_recovery', methods=["POST", "GET"])
+@userAuth.route('/password_recovery', methods=["POST", "GET"])
 def password_recovery():
     form = recoveryForm()
     form.email.render_kw = {'class': 'search-input'}
@@ -160,10 +173,10 @@ def password_recovery():
             return redirect(url_for('.login'))
 
 
-    return render_template('postview/password_recovery.html', form=form)
+    return render_template('userAuth/password_recovery.html', form=form)
 
 
-@auth.route('/verify', methods=["POST", "GET"])
+@userAuth.route('/verify', methods=["POST", "GET"])
 def verify():
     form_code = ValidateForm()
     form_code.email_code.render_kw = {'class': 'search-input'}
@@ -184,17 +197,17 @@ def verify():
             res = Users.addUser(session.get('name'), session.get('email'), hash)
             if res:
                 flash("Вы успешно зарегистрированы", "success")
-                return redirect(url_for('login'))
+                return redirect(url_for('.login'))
             else:
                 flash("Ошибка при добавлении в БД", "error")
 
         else:
             flash("Неверный код подтверждения", "error")
 
-    return render_template('postview/verify.html', form_code=form_code, my_mail=my_mail)
+    return render_template('userAuth/verify.html', form_code=form_code, my_mail=my_mail)
 
 
-@auth.route('/verify_recovery', methods=["POST", "GET"])
+@userAuth.route('/verify_recovery', methods=["POST", "GET"])
 def verify_recovery():
     form = ValidateForm()
     form.email_code.render_kw = {'class': 'search-input'}
@@ -215,10 +228,10 @@ def verify_recovery():
         else:
             flash("Неверный код подтверждения", "error")
 
-    return render_template('postview/verify_recovery.html', form=form, my_mail=my_mail)
+    return render_template('userAuth/verify_recovery.html', form=form, my_mail=my_mail)
 
 
-@auth.route('/new_psw', methods=["POST", "GET"])
+@userAuth.route('/new_psw', methods=["POST", "GET"])
 def new_psw():
     form = new_psw_form()
     form.psw.render_kw = {'class': 'search-input'}
@@ -238,5 +251,5 @@ def new_psw():
         else:
             flash("Ошибка при добавлении в БД", "error")
 
-    return render_template('postview/new_psw.html', form=form)
+    return render_template('userAuth/new_psw.html', form=form)
 

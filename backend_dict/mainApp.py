@@ -19,7 +19,7 @@ from Models import db, Comments, Mfk, Users
 
 from admin.admin import admin
 from postview.postview import postView
-from auth.auth import auth
+from auth.auth import userAuth
 
 #TODO вкладка авторизация ведет на пустую страницу 
 #TODO importы почисть
@@ -44,30 +44,30 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///MainDB.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)  
 
-# mail config
-mail = Mail(app)
+# # mail config
+# mail = Mail(app)
 
-app.config["MAIL_SERVER"] = 'smtp.gmail.com'
-app.config["MAIL_PORT"] = 465
-app.config["MAIL_USERNAME"] = 'gvozdikgeorge@gmail.com'
-app.config['MAIL_PASSWORD'] = 'mkdwvebgqqrmxkgt'
-app.config['MAIL_USE_TLS'] = False
-app.config['MAIL_USE_SSL'] = True
-app.config['SECRET_KEY'] = os.urandom(50).hex()
-app.config['RECAPTCHA_PUBLIC_KEY'] = "6LeRRc0nAAAAAHncCrhRoeYqSqlBBl5b0kODY_qQ"
-app.config['RECAPTCHA_PRIVATE_KEY'] = "6LeRRc0nAAAAAK6u6lMesUFuM-rnzQLWKFKI9xEV"
+# app.config["MAIL_SERVER"] = 'smtp.gmail.com'
+# app.config["MAIL_PORT"] = 465
+# app.config["MAIL_USERNAME"] = 'gvozdikgeorge@gmail.com'
+# app.config['MAIL_PASSWORD'] = 'mkdwvebgqqrmxkgt'
+# app.config['MAIL_USE_TLS'] = False
+# app.config['MAIL_USE_SSL'] = True
+# app.config['SECRET_KEY'] = os.urandom(50).hex()
+# app.config['RECAPTCHA_PUBLIC_KEY'] = "6LeRRc0nAAAAAHncCrhRoeYqSqlBBl5b0kODY_qQ"
+# app.config['RECAPTCHA_PRIVATE_KEY'] = "6LeRRc0nAAAAAK6u6lMesUFuM-rnzQLWKFKI9xEV"
 
-mail = Mail(app)
+# mail = Mail(app)
 
 csrf = CSRFProtect(app)
 csrf.init_app(app)
 
 app.config.from_object(__name__)
 
-login_manager = LoginManager(app)
-login_manager.login_view = 'login'
-login_manager.login_message = "Авторизуйтесь для доступа к закрытым страницам"
-login_manager.login_message_category = "success"
+# login_manager = LoginManager(app)
+# login_manager.login_view = 'login'
+# login_manager.login_message = "Авторизуйтесь для доступа к закрытым страницам"
+# login_manager.login_message_category = "success"
 
 menu = [
     {"title": "МФК", "url": "/postView"},
@@ -122,7 +122,7 @@ def index():
 
 app.register_blueprint(admin, url_prefix='/admin')
 app.register_blueprint(postView, url_prefix='/postView')
-app.register_blueprint(auth, url_prefix='/auth')
+app.register_blueprint(userAuth, url_prefix='/userAuth')
 
 #################################################################################
 # profile --
