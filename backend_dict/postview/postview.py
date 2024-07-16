@@ -14,6 +14,7 @@ from postview.postViewForms import PollForm1, ContactForm, searchForm, commentDe
 
 #TODO clear forms models css
 
+
 postView = Blueprint('postView', __name__, template_folder='templates', static_folder='.static')
 
 
