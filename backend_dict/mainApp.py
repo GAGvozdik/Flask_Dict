@@ -13,7 +13,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 
 from UserLogin import UserLogin
-from forms import LoginForm, RegisterForm, starsForm, ValidateForm, recoveryForm
+from forms import LoginForm, RegisterForm, starsForm, ValidateForm, recoveryForm, DEVLoginForm
 from forms import PollForm1, ContactForm, searchForm, commentDelForm, new_psw_form
 from Models import db, Comments, Mfk, Users
 
@@ -69,6 +69,8 @@ login_manager.login_message_category = "success"
 
 menu = [
     {"title": "МФК", "url": "/postView"},
+    # del dev 
+    {"title": "DEV", "url": "/"},
     {"title": "Авторизация", "url": "/login"},
     {"title": "Подобрать МФК", "url": "/question"},
     {"title": "Обратная связь", "url": "/contacts"},
@@ -79,9 +81,17 @@ menu = [
 max_commetns_numb = 7
 
 
+
 def create_db():
     db.create_all()
 
+@app.route('/loginDEV', methods=["POST", "GET"])
+def loginDEV():
+    user = Users.getUserByEmail('qwer@gmail.com')
+    userlogin = UserLogin().create(user)
+    login_user(userlogin, remember=0)
+    print('lodev')
+    return redirect(url_for('profile'))
 
 # def rewrite_db():
 #     add_mfk_to_db()
@@ -89,6 +99,17 @@ def create_db():
 @app.context_processor
 def inject_menu():
     return {'menu': menu}
+
+#TODO clear methods=["POST", "GET"]
+@app.route('/', methods=["POST", "GET"])
+def index():
+
+    loginform = DEVLoginForm()
+
+    if loginform.validate_on_submit():
+        return redirect(url_for('loginDEV'))
+
+    return render_template('index.html', my_text='МФК', menu=menu, loginform=loginform)
 
 app.register_blueprint(admin, url_prefix='/admin')
 
@@ -174,6 +195,7 @@ def profile():
 # comments/marks --
 #################################################################################
 
+#TODO add different causes of mark
 @app.route("/poll", methods=['GET', 'POST'])
 def poll():
     form = PollForm1()
@@ -194,6 +216,8 @@ def addComment(alias):
     mfk = Mfk.getMfk(alias)
     if not mfk:
         abort(404)
+
+    flash(Comments.getUserCommentsNumb(current_user.getName()))
 
     form = starsForm()
     if form.validate_on_submit():

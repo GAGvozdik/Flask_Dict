@@ -33,8 +33,20 @@
         </div>
 
         <nav>
+
+
           <div class="navbar">
+
             <div class="menu_container nav-container">
+
+                {% if loginform %} 
+                    <form action="" method="post">
+                        {{ loginform.hidden_tag() }}
+                        {{ loginform.csrf_token }}       
+                        {{ loginform.submit( class="loginoutBTN1") }}    
+                    </form>
+                {% endif %}
+
                 <div class="" onclick="toggleLeft()">
                     <input class="checkbox" type="checkbox" name="" id="" />
                     <div class="hamburger-lines">
@@ -43,7 +55,10 @@
                       <span class="line line3"></span>
                     </div>
                 </div>
-              <div class="logo">
+
+                <div class="logo">
+
+                </div>
                 <!--<h1>Navbar</h1>-->
               </div>
             </div>

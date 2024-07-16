@@ -1047,7 +1047,7 @@ ul.poll-radio input[type='radio']:checked::after {
         max-width: 100%;
         box-sizing: border-box;
         display:inline-block;
-        float:left;
+        float: 'left';
         margin-top: 10px;
         margin-bottom: 10px;
     }
@@ -1056,7 +1056,7 @@ ul.poll-radio input[type='radio']:checked::after {
     .other{
         max-width: 100%;
         box-sizing: border-box;
-        float:left;
+        float:'left';
         margin-top: -40px;
     }
 
@@ -1081,11 +1081,77 @@ ul.poll-radio input[type='radio']:checked::after {
 /* ------------------------------------------------------------------- */
 /*  */
 /* ------------------------------------------------------------------- */
+button,
+button:active,
+button:focus  {
+  border:none;
+}
+
+.loginoutBTN1{
+  display: flex; 
+  justify-content: center;
+  align-items: center;
+  height: 60px;
+  color: white;
+  background-color: #009688;
+  width: 100px;
+  position: absolute;
+  top: 0px;
+  left: 120px;
+  z-index: 27;
+
+  border:none;
+  padding: 0;
+
+}
+
+::-moz-focus-outer, ::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+.loginoutBTN1:hover{
+  background-color: white;
+  color: #009688;
+  transition: 0.2s ease-in-out;
+}
+
+.loginoutBTN1:active {
+  background-color: #009688;
+  color: white;
+  transition: 0.2s ease-in-out;
+}
 
 
+.loginoutBTN2{
+  display: flex; 
+  justify-content: center;
+  align-items: center;
+  color: white;
+  background-color: #009688;
+  height: 60px;
+  width: 100px;
+  position: absolute;
+  top: 0px;
+  left: 220px;
+  z-index: 27;
 
+  border:none;
+  padding: 0;
 
+}
 
+.loginoutBTN2:hover{
+  background-color: white;
+  color: #009688;
+  transition: 0.2s ease-in-out;
+}
+
+.loginoutBTN2:active {
+  background-color: #009688;
+  color: white;
+  transition: 0.2s ease-in-out;
+}
 
 
 
