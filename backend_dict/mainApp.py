@@ -16,7 +16,9 @@ from UserLogin import UserLogin
 from forms import LoginForm, RegisterForm, starsForm, ValidateForm, recoveryForm
 from forms import PollForm1, ContactForm, searchForm, commentDelForm, new_psw_form
 from Models import db, Comments, Mfk, Users
+
 from admin.admin import admin
+from postview.postview import postView
 
 #TODO вкладка авторизация ведет на пустую страницу 
 #TODO importы почисть
@@ -66,7 +68,7 @@ login_manager.login_message = "Авторизуйтесь для доступа 
 login_manager.login_message_category = "success"
 
 menu = [
-    {"title": "МФК", "url": "/"},
+    {"title": "МФК", "url": "/postView"},
     {"title": "Авторизация", "url": "/login"},
     {"title": "Подобрать МФК", "url": "/question"},
     {"title": "Обратная связь", "url": "/contacts"},
@@ -84,45 +86,92 @@ def create_db():
 # def rewrite_db():
 #     add_mfk_to_db()
 
+@app.context_processor
+def inject_menu():
+    return {'menu': menu}
+
 app.register_blueprint(admin, url_prefix='/admin')
 
 ##############################################################################
 # Mfk pages
 ##############################################################################
 
-@app.route("/")
-@app.route("/dict", methods=['GET', 'POST'])
-def dict():
-    form = searchForm()
-    form.search.render_kw = {'placeholder': 'Введите текст'}
-
-    if form.validate_on_submit():
-
-        #TODO use SQLAlchemy
-        mfk_table = Mfk.getSearchMfk(form.search.data)
-
-        if mfk_table == (False, False):
-            flash('МФК с таким описанием не найдено. Поменяйте формулировку', category='error')
-            return redirect('dict')
-        else:
-            return render_template('dict.html', my_text='МФК', menu=menu, mfk_table=mfk_table, form=form)
-
-    
-    return render_template('dict.html', my_text='МФК', menu=menu, mfk_table=Mfk.getMfkAnonce(), dbase=db, form=form, bootstrap=bootstrap)
-
-
-@app.route("/mfk/<alias>", methods=['GET', 'POST'])
-def showMfk(alias):
-    
-    #TODO use SQLAlchemy
-    mfk = Mfk.getMfk(alias)
-    if not mfk:
-        abort(404)
-
-    return render_template('mfk.html', menu=menu, mfk=mfk, alias=alias, my_comments=Comments.getComment(alias))
+app.register_blueprint(postView, url_prefix='/postView')
 
 #################################################################################
-# comments/marks
+# profile --
+#################################################################################
+
+@app.route('/profile', methods=["POST", "GET"])
+@login_required
+def profile():
+    form = commentDelForm()
+    if form.validate_on_submit():
+
+        mfk_title = request.form.get('mfk_title')
+        mfk_name = request.form.get('mfk_name')
+
+        #TODO use SQLAlchemy
+        if mfk_title != "Вы еще не ставили оценки":
+            Comments.delComment(mfk_title, current_user.getName())
+
+            if Comments.getUserCommentsNumb(current_user.getName()) != (False, False):
+                comments_numb = len(Comments.getUserCommentsNumb(current_user.getName()))
+            else:
+                comments_numb = 0
+            Users.updateUserCommentsNumb(comments_numb, current_user.getEmail())
+
+            score_list = Comments.getMfkScore(mfk_name)
+            mfk_score = 0
+            len_score_list = 0
+
+            for i in score_list:
+                for j in i:
+                    mfk_score += int(j)
+                    len_score_list += 1
+
+            if len_score_list == 0:
+                mfk_score = 0
+            else:
+                mfk_score = round(mfk_score / len_score_list)
+
+            Mfk.updateMfkScore(mfk_name, mfk_score)
+
+            score_numb = Mfk.getMfkScoreNumb(mfk_name)
+            for i in score_numb:
+                for j in i:
+                    score_numb = j
+
+            if (score_numb == None) or (score_numb == 0):
+                score_numb = 0
+            else:
+                score_numb -= 1
+            Mfk.updateMfkScoreNumb(mfk_name, score_numb)
+
+    #TODO use SQLAlchemy
+    your_comments = Comments.getUserCommentsNumb(current_user.getName())
+    if your_comments == (False, False):
+        class Person:
+            def __init__(self, name):
+                self.name = name
+
+        your_comments = [Person("")]
+        your_comments[0].score = ""
+        your_comments[0].mfkname = "Вы еще не ставили оценки"
+        your_comments[0].mfktitle = "Вы еще не ставили оценки"
+
+    if Comments.getUserCommentsNumb(current_user.getName()) != (False, False):
+        comments_numb = len(Comments.getUserCommentsNumb(current_user.getName()))
+    else:
+        comments_numb = 0
+    Users.updateUserCommentsNumb(comments_numb, current_user.getEmail())
+
+    return render_template('profile.html', menu=menu, your_comments=your_comments, comments_numb=comments_numb, form=form)
+
+
+
+#################################################################################
+# comments/marks --
 #################################################################################
 
 @app.route("/poll", methods=['GET', 'POST'])
@@ -211,7 +260,7 @@ def addComment(alias):
 
 
 #################################################################################
-# 
+# profile login ++
 #################################################################################
 
 
@@ -254,77 +303,8 @@ def logout():
     return redirect(url_for('login'))
 
 
-@app.route('/profile', methods=["POST", "GET"])
-@login_required
-def profile():
-    form = commentDelForm()
-    if form.validate_on_submit():
-
-        mfk_title = request.form.get('mfk_title')
-        mfk_name = request.form.get('mfk_name')
-
-        #TODO use SQLAlchemy
-        if mfk_title != "Вы еще не ставили оценки":
-            Comments.delComment(mfk_title, current_user.getName())
-
-            if Comments.getUserCommentsNumb(current_user.getName()) != (False, False):
-                comments_numb = len(Comments.getUserCommentsNumb(current_user.getName()))
-            else:
-                comments_numb = 0
-            Users.updateUserCommentsNumb(comments_numb, current_user.getEmail())
-
-            score_list = Comments.getMfkScore(mfk_name)
-            mfk_score = 0
-            len_score_list = 0
-
-            for i in score_list:
-                for j in i:
-                    mfk_score += int(j)
-                    len_score_list += 1
-
-            if len_score_list == 0:
-                mfk_score = 0
-            else:
-                mfk_score = round(mfk_score / len_score_list)
-
-            Mfk.updateMfkScore(mfk_name, mfk_score)
-
-            score_numb = Mfk.getMfkScoreNumb(mfk_name)
-            for i in score_numb:
-                for j in i:
-                    score_numb = j
-
-            if (score_numb == None) or (score_numb == 0):
-                score_numb = 0
-            else:
-                score_numb -= 1
-            Mfk.updateMfkScoreNumb(mfk_name, score_numb)
-
-    #TODO use SQLAlchemy
-    your_comments = Comments.getUserCommentsNumb(current_user.getName())
-    if your_comments == (False, False):
-        class Person:
-            def __init__(self, name):
-                self.name = name
-
-        your_comments = [Person("")]
-        your_comments[0].score = ""
-        your_comments[0].mfkname = "Вы еще не ставили оценки"
-        your_comments[0].mfktitle = "Вы еще не ставили оценки"
-
-    if Comments.getUserCommentsNumb(current_user.getName()) != (False, False):
-        comments_numb = len(Comments.getUserCommentsNumb(current_user.getName()))
-    else:
-        comments_numb = 0
-    Users.updateUserCommentsNumb(comments_numb, current_user.getEmail())
-
-    return render_template('profile.html', menu=menu, your_comments=your_comments, comments_numb=comments_numb, form=form)
-    # return render_template('profile.html', menu=menu, your_comments=[], comments_numb=999, form=form)
-
-
-
 #################################################################################
-# 
+# registr ++
 #################################################################################
 
 
@@ -358,6 +338,11 @@ def register():
         pass
 
     return render_template("register.html", menu=menu, my_text="Регистрация", form=form)
+
+
+#################################################################################
+# psw recovery + veryfy ++
+#################################################################################
 
 @app.route('/password_recovery', methods=["POST", "GET"])
 def password_recovery():
@@ -415,8 +400,6 @@ def verify():
 
         else:
             flash("Неверный код подтверждения", "error")
-            print(otp)
-            print(user_otp)
 
     return render_template('verify.html', form_code=form_code, my_mail=my_mail)
 
@@ -469,7 +452,7 @@ def new_psw():
 
 
 #################################################################################
-# other
+# other ++
 #################################################################################
 
 

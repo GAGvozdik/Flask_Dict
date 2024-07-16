@@ -1,0 +1,55 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+
+
+        <h1>{{ mfk.name }}</h1>
+        <b>Факультет: {{ mfk.faculty }}</b>
+        <br>{{ mfk.desc }}
+
+
+
+    {% for cat, msg in get_flashed_messages(True) %}
+        <div class="flash {{cat}}">{{ msg }}</div>
+    {% endfor %}
+
+
+    <h2 style="margin-top: 10px; margin-bottom: 10px; ">Комментарии</h2>
+    <ul class="list-comments">
+        {% for m in my_comments %}
+            <li>
+                <p class="title">
+
+                    {{m.name}}
+
+                    <div class="comment_stars_background comment_container container">
+                      <div class="comment_stars_background container__items">
+                        {% for i in range(m.score|int) %}
+                          <label class="comment_stars_background my_label" for="">
+                            <div class="star-stroke">
+                              <div class=""></div>
+                            </div>
+                          </label>
+                        {% endfor %}
+                      </div>
+                    </div>
+
+
+                <p class="annonce">{{m.username}}<br>{{ m.reason }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <a class="my_a" href="{{ url_for('addComment', alias=alias)}}">
+        <button class="common_btn">
+            Добавить комментарий
+        </button>
+    </a>
+
+
+{% endblock %}
+
+<!--    {{ post | safe}}-->
+
+<!--    <form action="{{url_for('addPost')}}" method="post" class="form-contact">-->
