@@ -14,7 +14,7 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 
 from UserLogin import UserLogin
 from forms import LoginForm, RegisterForm, starsForm, ValidateForm, recoveryForm, DEVLoginForm
-from forms import PollForm1, ContactForm, searchForm, commentDelForm, new_psw_form
+from forms import PollForm1, ContactForm, searchForm, commentDelForm, new_psw_form, CommentForm
 from Models import db, Comments, Mfk, Users
 
 from admin.admin import admin
@@ -23,7 +23,7 @@ from postview.postview import postView
 #TODO вкладка авторизация ведет на пустую страницу 
 #TODO importы почисть
 #TODO use SQLAlchemy
-#TODO 
+#TODO move or del dev login to admin
 #TODO 
 
 app = Flask(__name__)
@@ -134,13 +134,8 @@ def profile():
 
         #TODO use SQLAlchemy
         if mfk_title != "Вы еще не ставили оценки":
-            Comments.delComment(mfk_title, current_user.getName())
 
-            if Comments.getUserCommentsNumb(current_user.getName()) != (False, False):
-                comments_numb = len(Comments.getUserCommentsNumb(current_user.getName()))
-            else:
-                comments_numb = 0
-            Users.updateUserCommentsNumb(comments_numb, current_user.getEmail())
+            Comments.delComment(mfk_title, current_user.getName())
 
             score_list = Comments.getMfkScore(mfk_name)
             mfk_score = 0
@@ -156,18 +151,13 @@ def profile():
             else:
                 mfk_score = round(mfk_score / len_score_list)
 
+            #TODO сделать id по name 
             Mfk.updateMfkScore(mfk_name, mfk_score)
 
-            score_numb = Mfk.getMfkScoreNumb(mfk_name)
-            for i in score_numb:
-                for j in i:
-                    score_numb = j
 
-            if (score_numb == None) or (score_numb == 0):
-                score_numb = 0
-            else:
-                score_numb -= 1
-            Mfk.updateMfkScoreNumb(mfk_name, score_numb)
+
+            if Mfk.getMfkScoreNumb(mfk_name) > 0:
+                Mfk.updateMfkScoreNumb(mfk_name, Mfk.getMfkScoreNumb(mfk_name) - 1)
 
     #TODO use SQLAlchemy
     your_comments = Comments.getUserCommentsNumb(current_user.getName())
@@ -208,83 +198,81 @@ def poll():
     return render_template('poll.html', my_text='Опросговна', menu=menu, form=form)
 
 
-@app.route("/addComment/<alias>", methods=['GET', 'POST'])
-@login_required
+# TODO комментарии добавляются на страницу мфк но не добавляются к пользователю на страницу пользователя
+@app.route('/addComment/<alias>', methods=['GET', 'POST'])
 def addComment(alias):
 
-    #TODO use SQLAlchemy
+    #TODO use SQLAlchemy 
     mfk = Mfk.getMfk(alias)
     if not mfk:
         abort(404)
 
-    flash(Comments.getUserCommentsNumb(current_user.getName()))
-
     form = starsForm()
+    comments_numb = 0
+    max_comments_numb = 7  # Максимальное количество комментариев
+    current_user_name = current_user.getName()  # Замените на логин текущего пользователя
+
+    # Проверяем, есть ли комментарии пользователя под этой статьей
+    comments = Comments.getComment(alias)
+    if comments:
+        comments_numb = len(comments)
+        for comment in comments:
+            if comment.username == current_user_name:
+                flash('Комментарий уже добавлен','error')
+                return redirect(url_for('postView.showMfk', alias=alias))
+
     if form.validate_on_submit():
+        # Проверяем, не превышено ли максимальное число комментариев
+        if comments_numb < max_comments_numb:
+            # Извлекаем значения из формы
+            score = form.score.data
+            reason = form.reason.data
 
-        #TODO use SQLAlchemy
-        comments_numb = len(Comments.getUserCommentsNumb(current_user.getName()))
+            # Преобразуем score в числовое значение
+            score_value = int(score[2:])  # Извлекаем число из 'st5', 'st4', etc.
+            
+            mark_score = Mfk.getMfkScoreNumb(alias) + 1
 
-        if comments_numb < max_commetns_numb:
+            res = Comments.addComment(
+                current_user_name,
+                alias,  # Используем alias из URL
+                score_value,  # Передаем числовую оценку
+                mfk.getMfkName(alias),  #TODO change 2 mfktitle  
+                mark_score,
+                reason
+            )
 
-            is_comment_already_added = 0
-            if Comments.getUserCommentsNumb(current_user.getName()) != (False, False):
-                for i in Comments.getUserCommentsNumb(current_user.getName()):
-                    for j in i:
-                        #TODO fix 0 to smth like mfk[0]
-                        if j == 0:
-                            is_comment_already_added = 1
+            Mfk.updateMfkScoreNumb(alias, Mfk.getMfkScoreNumb(alias) + 1)
 
-            if is_comment_already_added == 0:
-                #TODO fix ta[-1], 0!!!!!, form.
-                res = Comments.addComment(current_user.getName(), str(alias), form.score.data[-1], 0, form.reason.data)
-                if not res:
-                    flash('Ошибка. Оценка не добавлена, попробуйте перезагрузить страницу', category='error')
-                else:
-                    flash('Оценка добавлена успешно', category='success')
 
-                    if Comments.getUserCommentsNumb(current_user.getName()) != (False, False):
-                        comments_numb = len(Comments.getUserCommentsNumb(current_user.getName()))
-                    else:
-                        comments_numb = 0
-                    Users.updateUserCommentsNumb(comments_numb, current_user.getEmail())
+            score_list = Comments.getMfkScore(alias)
+            mfk_score = 0
+            len_score_list = 0
 
-                    # ----------------------------------------------
-                    score_list = Comments.getMfkScore(alias)
-                    mfk_score = 0
-                    len_score_list = 0
-                    for i in score_list:
-                        for j in i:
-                            mfk_score += int(j)
-                            len_score_list += 1
+            for i in score_list:
+                for j in i:
+                    mfk_score += int(j)
+                    len_score_list += 1
 
-                    mfk_score = round(mfk_score / len_score_list)
-                    Mfk.updateMfkScore(alias, mfk_score)
-
-                    score_numb = Mfk.getMfkScoreNumb(alias)
-                    # for i in score_numb:
-                    #     for j in i:
-                    #         score_numb = j
-
-                    if score_numb == None:
-                        score_numb = 1
-                    else:
-                        score_numb += 1
-                    print('score_numb', score_numb)
-                    Mfk.updateMfkScoreNumb(alias, score_numb)
-
+            if len_score_list == 0:
+                mfk_score = 0
             else:
-                flash('Вы уже оставляли оценку этому мфк', category='error')
+                mfk_score = round(mfk_score / len_score_list)
+
+            #TODO сделать id по name 
+            Mfk.updateMfkScore(alias, mfk_score)
+
+            if res:
+                flash('Комментарий добавлен','sucess')
+            else:
+                flash('Ошибка добавления комментария','error')
         else:
             flash('Вы достигли лимита коментариев. Удалите комментарий, чтобы добавить новый', category='error')
-        return redirect(url_for('showMfk', alias=alias))
-
 
     return render_template('comments.html', menu=menu, mfk=mfk, alias=alias, my_comments=Comments.getComment(alias), form=form)
 
-
 #################################################################################
-# profile login ++
+# login ++
 #################################################################################
 
 

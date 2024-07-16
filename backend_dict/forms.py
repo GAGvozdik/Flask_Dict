@@ -6,15 +6,15 @@ from wtforms.validators import DataRequired, Email, Length, EqualTo, InputRequir
 import email_validator
 #TODO re comment captcha
 
-
+from wtforms import StringField, TextAreaField, IntegerField, SubmitField
 
 class DEVLoginForm(FlaskForm):
     submit = SubmitField("DEVLogin")
 
+#TODO re comment recaptcha
 class LoginForm(FlaskForm):
     email = StringField("Email: ", validators=[Email("Некорректный email")])
-    psw = PasswordField("Пароль: ", validators=[DataRequired(), Length(min=8, max=100,
-                                                                       message="Пароль должен быть от 8 до 100 символов")])
+    psw = PasswordField("Пароль: ", validators=[DataRequired(), Length(min=8, max=100, message="Пароль должен быть от 8 до 100 символов")])
     remember = BooleanField("Запомнить", default=False)
     # recaptcha = RecaptchaField()
     submit = SubmitField("ВХОД")
@@ -61,9 +61,10 @@ class starsForm(FlaskForm):
         ('st1', 'Terrible')
     ])
     reason = SelectField('reason', choices=[
-        ('not_helpful', 'Не помогло'),
-        ('not_interesting', 'Не интересно'),
-        ('not_relevant', 'Не соответствует')
+        ('Всё отлично', 'Всё отлично'),
+        ('Всё нормально', 'Всё нормально'),
+        ('Не соответствует', 'Не соответствует'),
+        ('Не интересно', 'Не интересно')
     ])
 
     submit = SubmitField('Подтвердить')
@@ -104,3 +105,11 @@ class PollForm1(FlaskForm):
 
 
 
+
+class CommentForm(FlaskForm):
+    username = StringField('Имя пользователя', validators=[DataRequired()])
+    mfkname = StringField('Алиас статьи', validators=[DataRequired()])
+    score = IntegerField('Оценка', validators=[DataRequired()])
+    mfktitle = StringField('Название статьи', validators=[DataRequired()])
+    reason = TextAreaField('Причина', validators=[DataRequired(), Length(max=255)])
+    submit = SubmitField('Добавить комментарий')

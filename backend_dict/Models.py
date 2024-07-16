@@ -6,17 +6,18 @@ import math
 
 #TODO add data 2 DB
 #TODO Связи между таблицами
-
+#TODO навести порядок, добавить время, убрать лишние поля
 db = SQLAlchemy()
-class Users(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(15), nullable=False)
-    email = db.Column(db.String(50), unique=True, nullable=False)
-    psw = db.Column(db.String(500), nullable=False)
 
-    avatar = db.Column(db.LargeBinary, nullable=True)  # Для хранения BLOB данных
-    comments_numb = db.Column(db.Integer, nullable=True)
-    time = db.Column(db.Integer, nullable=False)  # Возможно, используйте db.DateTime?
+class Users(db.Model):
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(15), nullable=False, unique=True)
+    email = db.Column(db.String(50), nullable=False, unique=True)
+    psw = db.Column(db.String(500), nullable=False)
+    avatar = db.Column(db.LargeBinary)
+    comments_numb = db.Column(db.Integer)
+    time = db.Column(db.Integer, nullable=False)
 
     # TODO add data 2 DB
     # date = db.Column(db.DateTime, default=datetime.utcnow)
@@ -134,15 +135,15 @@ class Users(db.Model):
 
 
 class Mfk(db.Model):
+    __tablename__ = 'mfk'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255), nullable=True)
-    faculty = db.Column(db.String(255), nullable=True)
-    desc = db.Column(db.Text, nullable=True)
-    online = db.Column(db.String(255), nullable=True)
-    openclose = db.Column(db.String(255), nullable=True)
-    score = db.Column(db.String(255), nullable=True)
-    score_numb = db.Column(db.Integer, nullable=True)
-
+    name = db.Column(db.String(255))
+    faculty = db.Column(db.String(255))
+    desc = db.Column(db.Text)
+    online = db.Column(db.String(255))
+    openclose = db.Column(db.Integer)
+    score = db.Column(db.Integer)
+    score_numb = db.Column(db.Integer)
 
     @staticmethod
     def getSearchMfk(a):
@@ -201,6 +202,17 @@ class Mfk(db.Model):
             print("getMfkScoreNumb Ошибка получения статьи из БД " + str(e))
         return None
     
+
+    @staticmethod
+    def getMfkName(mfk_id):
+        try:
+            mfk = Mfk.query.filter_by(id=mfk_id).first()
+            if mfk:
+                return mfk.name
+        except Exception as e:
+            print("getMfkName Ошибка получения статьи из БД " + str(e))
+        return None
+    
     @staticmethod
     def updateMfkScore(mfkname, score):
         try:
@@ -232,15 +244,15 @@ class Mfk(db.Model):
     def __repr__(self):
         return f"<Mfk {self.id}>"
 
-
 class Comments(db.Model):
+    __tablename__ = 'comments'
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(255), nullable=True)
-    mfkname = db.Column(db.String(255), nullable=True)
-    score = db.Column(db.String(255), nullable=True)
-    mfktitle = db.Column(db.String(255), nullable=True)
-    reason = db.Column(db.Text, nullable=True)
-
+    username = db.Column(db.String(255))
+    mfkname = db.Column(db.String(255))
+    score = db.Column(db.Integer, default=0)
+    mfktitle = db.Column(db.String(255))
+    markScore = db.Column(db.Integer, default=0)
+    reason = db.Column(db.Text)
 
     @staticmethod
     def getMfkScore(alias):
@@ -296,16 +308,15 @@ class Comments(db.Model):
 
 
     @staticmethod
-    def addComment(username, mfkname, score, mfktitle, reason):
+    def addComment(username, mfkname, score, mfktitle, mark_score, reason):
         try:
-            new_comment = Comments(username=username, mfkname=mfkname, score=score, mfktitle=mfktitle, reason=reason)
-            db.session.add(new_comment)
-            db.session.commit()
+            new_comment = Comments(username=username, mfkname=mfkname, score=score, mfktitle=mfktitle, markScore=mark_score, reason=reason)
+            db.session.add(new_comment)  # Добавляем новый комментарий в сессию
+            db.session.commit()  # Сохраняем изменения в базе данных
+            return True
         except Exception as e:
             print("addComment Ошибка добавления статьи в БД " + str(e))
             return False
-
-        return True
 
     def __repr__(self):
         return f"<Comments {self.id}>"

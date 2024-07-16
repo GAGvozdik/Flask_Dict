@@ -48,13 +48,13 @@
                 <p class="annonce">{{ m.reason }}</p>
             </li>
 
-            <form method="POST" action="/profile">
+            <form method="POST" action="">
                 {{ form.hidden_tag() }}
                 {{ form.csrf_token }}
                 <input type="hidden" name="mfk_title" value="{{ m.mfktitle }}" />
                 <input type="hidden" name="mfk_name" value="{{ m.mfkname }}" />
 
-                    {{ form.submit( class="common_btn") }}
+                {{ form.submit( class="common_btn") }}
             </form>
 
         {% endfor %}
